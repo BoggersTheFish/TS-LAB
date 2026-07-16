@@ -186,35 +186,35 @@ def effect_set_consistency_errors(
             if prior.get("id") != replacement.get("id"):
                 errors.append(
                     ContractError(
-                        code="VERSION-TRANSITION-STABLE-ID-MISMATCH",
-                        path="version_transition",
-                        message="prior and replacement roles must use one stable object ID",
-                    )
+                    code="VERSION-TRANSITION-STABLE-ID-MISMATCH",
+                    path="version_transition",
+                    message="prior and replacement roles must use one stable object ID",
                 )
+            )
             if prior.get("object_type") != replacement.get("object_type"):
                 errors.append(
                     ContractError(
-                        code="VERSION-TRANSITION-OBJECT-TYPE-MISMATCH",
-                        path="version_transition",
-                        message="prior and replacement roles must retain the object type",
-                    )
+                    code="VERSION-TRANSITION-OBJECT-TYPE-MISMATCH",
+                    path="version_transition",
+                    message="prior and replacement roles must retain the object type",
                 )
+            )
             if prior.get("canonical_hash") == replacement.get("canonical_hash"):
                 errors.append(
                     ContractError(
-                        code="VERSION-TRANSITION-HASH-NOT-CHANGED",
-                        path="version_transition",
-                        message="a declared replacement must name a distinct canonical version",
-                    )
+                    code="VERSION-TRANSITION-HASH-NOT-CHANGED",
+                    path="version_transition",
+                    message="a declared replacement must name a distinct canonical version",
                 )
+            )
             if replacement not in effect_refs:
                 errors.append(
                     ContractError(
-                        code="VERSION-TRANSITION-REPLACEMENT-NOT-EFFECT-TARGET",
-                        path="version_transition.replacement_object",
-                        message="the explicit replacement must be the post-state effect target",
-                    )
+                    code="VERSION-TRANSITION-REPLACEMENT-NOT-EFFECT-TARGET",
+                    path="version_transition.replacement_object",
+                    message="the explicit replacement must be the post-state effect target",
                 )
+            )
             else:
                 replacement_effect = next(
                     effect
@@ -246,35 +246,35 @@ def effect_set_consistency_errors(
             if prior.get("id") != replacement.get("id"):
                 errors.append(
                     ContractError(
-                        code="VERSION-TRANSITION-STABLE-ID-MISMATCH",
-                        path="version_transition",
-                        message="prior and replacement roles must use one stable object ID",
-                    )
+                    code="VERSION-TRANSITION-STABLE-ID-MISMATCH",
+                    path="version_transition",
+                    message="prior and replacement roles must use one stable object ID",
                 )
+            )
             if prior.get("object_type") != replacement.get("object_type"):
                 errors.append(
                     ContractError(
-                        code="VERSION-TRANSITION-OBJECT-TYPE-MISMATCH",
-                        path="version_transition",
-                        message="prior and replacement roles must retain the object type",
-                    )
+                    code="VERSION-TRANSITION-OBJECT-TYPE-MISMATCH",
+                    path="version_transition",
+                    message="prior and replacement roles must retain the object type",
                 )
+            )
             if prior.get("canonical_hash") == replacement.get("canonical_hash"):
                 errors.append(
                     ContractError(
-                        code="VERSION-TRANSITION-HASH-NOT-CHANGED",
-                        path="version_transition",
-                        message="a declared replacement must name a distinct canonical version",
-                    )
+                    code="VERSION-TRANSITION-HASH-NOT-CHANGED",
+                    path="version_transition",
+                    message="a declared replacement must name a distinct canonical version",
                 )
+            )
             if replacement not in effect_refs:
                 errors.append(
                     ContractError(
-                        code="VERSION-TRANSITION-REPLACEMENT-NOT-EFFECT-TARGET",
-                        path="version_transition.replacement_object",
-                        message="the explicit replacement must be the post-state effect target",
-                    )
+                    code="VERSION-TRANSITION-REPLACEMENT-NOT-EFFECT-TARGET",
+                    path="version_transition.replacement_object",
+                    message="the explicit replacement must be the post-state effect target",
                 )
+            )
             else:
                 replacement_effect = next(
                     effect
@@ -339,7 +339,8 @@ def _binding_errors(schema_name: str, instance: dict[str, Any]) -> list[Contract
             else:
                 seen_workers[worker_id] = binding
         producer = instance.get("producer", {})
-        producer_binding = seen_workers.get(producer.get("id"))
+        producer_id = producer.get("id")
+        producer_binding = seen_workers.get(producer_id) if producer_id else None
         if producer_binding is None:
             errors.append(
                 ContractError(
@@ -348,21 +349,31 @@ def _binding_errors(schema_name: str, instance: dict[str, Any]) -> list[Contract
                     "the receipt producer must have a directly bound worker record",
                 )
             )
-        elif any(
-            producer.get(source) != producer_binding.get(target)
-            for source, target in (
-                ("role", "role"),
-                ("version", "version"),
-                ("implementation_hash", "implementation_hash"),
-            )
-        ):
-            errors.append(
-                ContractError(
+        else:
+            if any(
+                producer.get(source) != producer_binding.get(target)
+                for source, target in (
+                    ("role", "role"),
+                    ("version", "version"),
+                    ("implementation_hash", "implementation_hash"),
+                )
+            ):
+                errors.append(
+                    ContractError(
                     "RECEIPT-PRODUCER-WORKER-MISMATCH",
                     "producer",
                     "the producer identity and directly bound worker version must agree",
                 )
             )
+            responsibilities = producer_binding.get("responsibilities", [])
+            if "RECEIPT_RECORDING" not in responsibilities:
+                errors.append(
+                    ContractError(
+                        "RECEIPT-PRODUCER-MISSING-RESPONSIBILITY",
+                        "producer.id",
+                        "the worker bound to the receipt producer must include RECEIPT_RECORDING responsibility",
+                    )
+                )
     return errors
 
 
@@ -443,3 +454,4 @@ def validate_contract(validate_schema):
         return validate_schema(schema_name, instance), constitutional_errors(schema_name, instance)
 
     return validate
+}
