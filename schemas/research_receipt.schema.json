@@ -2,120 +2,48 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.ts-lab.invalid/0.1/research_receipt.schema.json",
   "title": "Research Receipt",
-  "description": "A hash-linked local consistency and replay record. Only transitionHumanDecisionRecord with action APPROVE may authorize canonical transitions. execution_completed is true iff at least one execution_record has observed_outcome COMPLETED.",
+  "description": "Hash-linked record. human_approval_record must be transitionHumanDecisionRecord for authorization. execution_completed is true iff at least one execution_record has observed_outcome=COMPLETED.",
   "type": "object",
-  "required": [
-    "id",
-    "schema_version",
-    "parent_receipt_hash",
-    "parent_canonical_state_hash",
-    "proposed_transition_hash",
-    "source_object_hashes",
-    "recorded_evidence",
-    "challenge_hashes",
-    "verifier_results",
-    "mandatory_gate_summary",
-    "decision",
-    "human_approval_record",
-    "post_state_hash",
-    "tools_used",
-    "workers",
-    "environment_fingerprint",
-    "replay_instructions",
-    "replay_result",
-    "execution_completed",
-    "evidence_recorded",
-    "verifier_obligation_satisfied",
-    "transition_authorized",
-    "canonical_state_committed",
-    "deterministic_receipt_hash",
-    "producer",
-    "provenance",
-    "created_at",
-    "extensions"
-  ],
+  "required": ["id", "schema_version", "parent_receipt_hash", "parent_canonical_state_hash", "proposed_transition_hash", "source_object_hashes", "recorded_evidence", "challenge_hashes", "verifier_results", "mandatory_gate_summary", "decision", "human_approval_record", "post_state_hash", "tools_used", "workers", "environment_fingerprint", "replay_instructions", "replay_result", "execution_completed", "evidence_recorded", "verifier_obligation_satisfied", "transition_authorized", "canonical_state_committed", "deterministic_receipt_hash", "producer", "provenance", "created_at", "extensions"],
   "properties": {
     "id": { "$ref": "common.schema.json#/$defs/researchReceiptId" },
     "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
     "parent_receipt_hash": { "$ref": "common.schema.json#/$defs/nullableHash" },
     "parent_canonical_state_hash": { "$ref": "common.schema.json#/$defs/hash" },
     "proposed_transition_hash": { "$ref": "common.schema.json#/$defs/hash" },
-    "source_object_hashes": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "common.schema.json#/$defs/hash" },
-      "uniqueItems": true
-    },
-    "recorded_evidence": {
-      "type": "array",
-      "items": { "$ref": "common.schema.json#/$defs/recordedEvidenceRecord" },
-      "uniqueItems": true
-    },
-    "challenge_hashes": {
-      "type": "array",
-      "items": { "$ref": "common.schema.json#/$defs/hash" },
-      "uniqueItems": true
-    },
-    "verifier_results": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "common.schema.json#/$defs/verifierResult" }
-    },
+    "source_object_hashes": { "type": "array", "minItems": 1, "items": { "$ref": "common.schema.json#/$defs/hash" }, "uniqueItems": true },
+    "recorded_evidence": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/recordedEvidenceRecord" }, "uniqueItems": true },
+    "challenge_hashes": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/hash" }, "uniqueItems": true },
+    "verifier_results": { "type": "array", "minItems": 1, "items": { "$ref": "common.schema.json#/$defs/verifierResult" } },
     "mandatory_gate_summary": { "$ref": "common.schema.json#/$defs/mandatoryGateSummary" },
-    "decision": {
-      "type": "object",
-      "required": ["decision_id", "verdict", "rationale"],
-      "properties": {
-        "decision_id": { "$ref": "common.schema.json#/$defs/decisionId" },
-        "verdict": { "$ref": "common.schema.json#/$defs/decisionVerdict" },
-        "rationale": { "$ref": "common.schema.json#/$defs/nonBlankString" }
-      },
-      "additionalProperties": false
-    },
+    "decision": { "type": "object", "required": ["decision_id", "verdict", "rationale"], "properties": { "decision_id": { "$ref": "common.schema.json#/$defs/decisionId" }, "verdict": { "$ref": "common.schema.json#/$defs/decisionVerdict" }, "rationale": { "$ref": "common.schema.json#/$defs/nonBlankString" } }, "additionalProperties": false },
     "human_approval_record": { "$ref": "common.schema.json#/$defs/transitionHumanDecisionRecord" },
     "post_state_hash": { "$ref": "common.schema.json#/$defs/nullableHash" },
-    "tools_used": {
-      "type": "array",
-      "items": { "$ref": "common.schema.json#/$defs/toolBinding" },
-      "uniqueItems": true
-    },
-    "workers": {
-      "type": "array",
-      "items": { "$ref": "common.schema.json#/$defs/workerBinding" },
-      "uniqueItems": true
-    },
+    "tools_used": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/toolBinding" }, "uniqueItems": true },
+    "workers": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/workerBinding" }, "uniqueItems": true },
     "environment_fingerprint": { "$ref": "common.schema.json#/$defs/hash" },
     "replay_instructions": { "$ref": "common.schema.json#/$defs/replayInstructions" },
     "replay_result": { "$ref": "common.schema.json#/$defs/replayResult" },
     "execution_completed": { "type": "boolean" },
-    "execution_records": {
-      "type": "array",
-      "items": { "$ref": "common.schema.json#/$defs/executionRecord" },
-      "uniqueItems": true
-    },
+    "execution_records": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/executionRecord" }, "uniqueItems": true },
     "evidence_recorded": { "type": "boolean" },
     "verifier_obligation_satisfied": { "type": "boolean" },
     "transition_authorized": { "type": "boolean" },
     "canonical_state_committed": { "type": "boolean" },
     "deterministic_receipt_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
-    "producer": {
-      "allOf": [
-        { "$ref": "common.schema.json#/$defs/identity" },
-        { "type": "object", "required": ["implementation_hash"] }
-      ]
-    },
+    "producer": { "allOf": [ { "$ref": "common.schema.json#/$defs/identity" }, { "type": "object", "required": ["implementation_hash"] } ] },
     "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
     "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
     "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
   },
   "allOf": [
     {
-      "if": { "properties": { "evidence_recorded": { "const": true } }, "required": ["evidence_recorded"] },
+      "if": { "properties": { "evidence_recorded": { "const": true } } },
       "then": { "properties": { "recorded_evidence": { "minItems": 1 } } },
       "else": { "properties": { "recorded_evidence": { "maxItems": 0 } } }
     },
     {
-      "if": { "properties": { "verifier_obligation_satisfied": { "const": true } }, "required": ["verifier_obligation_satisfied"] },
+      "if": { "properties": { "verifier_obligation_satisfied": { "const": true } } },
       "then": {
         "properties": {
           "verifier_results": { "$ref": "common.schema.json#/$defs/authorizedVerifierResults" },
@@ -124,7 +52,7 @@
       }
     },
     {
-      "if": { "properties": { "transition_authorized": { "const": true } }, "required": ["transition_authorized"] },
+      "if": { "properties": { "transition_authorized": { "const": true } } },
       "then": {
         "properties": {
           "verifier_results": { "$ref": "common.schema.json#/$defs/authorizedVerifierResults" },
@@ -137,7 +65,7 @@
       }
     },
     {
-      "if": { "properties": { "canonical_state_committed": { "const": true } }, "required": ["canonical_state_committed"] },
+      "if": { "properties": { "canonical_state_committed": { "const": true } } },
       "then": {
         "properties": {
           "transition_authorized": { "const": true },
@@ -148,55 +76,31 @@
           "human_approval_record": { "$ref": "common.schema.json#/$defs/transitionHumanDecisionRecord" },
           "post_state_hash": { "$ref": "common.schema.json#/$defs/hash" },
           "tools_used": { "minItems": 1 },
-          "workers": {
-            "minItems": 1,
-            "contains": {
-              "type": "object",
-              "required": ["responsibilities"],
-              "properties": {
-                "responsibilities": { "contains": { "const": "REPLAY_EXECUTION" } }
-              }
-            },
-            "minContains": 1
-          },
+          "workers": { "minItems": 1, "contains": { "type": "object", "properties": { "responsibilities": { "contains": { "const": "REPLAY_EXECUTION" } } } }, "minContains": 1 },
           "replay_instructions": { "$ref": "common.schema.json#/$defs/completeReplayInstructions" },
           "replay_result": { "$ref": "common.schema.json#/$defs/passedReplayResult" }
         }
       }
     },
     {
-      "if": { "properties": { "canonical_state_committed": { "const": false } }, "required": ["canonical_state_committed"] },
+      "if": { "properties": { "canonical_state_committed": { "const": false } } },
       "then": { "properties": { "post_state_hash": { "type": "null" } } }
     },
     {
-      "if": { "properties": { "decision": { "type": "object", "properties": { "verdict": { "enum": ["REJECT", "QUARANTINE", "NO_CANONICAL_CHANGE"] } }, "required": ["verdict"] } }, "required": ["decision"] },
+      "if": { "properties": { "decision": { "properties": { "verdict": { "enum": ["REJECT", "QUARANTINE", "NO_CANONICAL_CHANGE"] } } } } },
       "then": { "properties": { "transition_authorized": { "const": false }, "canonical_state_committed": { "const": false }, "post_state_hash": { "type": "null" } } }
     },
     {
-      "if": { "properties": { "human_approval_record": { "type": "object", "properties": { "action": { "const": "REJECT" } }, "required": ["action"] } }, "required": ["human_approval_record"] },
+      "if": { "properties": { "human_approval_record": { "properties": { "action": { "const": "REJECT" } } } } },
       "then": { "properties": { "transition_authorized": { "const": false }, "canonical_state_committed": { "const": false } } }
     },
     {
-      "if": { "properties": { "execution_completed": { "const": true } }, "required": ["execution_completed"] },
-      "then": {
-        "properties": {
-          "execution_records": { "minItems": 1 }
-        }
-      }
+      "if": { "properties": { "execution_completed": { "const": true } } },
+      "then": { "properties": { "execution_records": { "minItems": 1 } } }
     },
     {
-      "if": { "properties": { "execution_completed": { "const": false } }, "required": ["execution_completed"] },
-      "then": {
-        "properties": {
-          "execution_records": {
-            "not": {
-              "contains": {
-                "properties": { "observed_outcome": { "const": "COMPLETED" } }
-              }
-            }
-          }
-        }
-      }
+      "if": { "properties": { "execution_completed": { "const": false } } },
+      "then": { "properties": { "execution_records": { "not": { "contains": { "properties": { "observed_outcome": { "const": "COMPLETED" } } } } } } }
     }
   ],
   "additionalProperties": false
