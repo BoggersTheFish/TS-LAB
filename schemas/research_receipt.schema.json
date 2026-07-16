@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schemas.ts-lab.invalid/0.1/research_receipt.schema.json",
   "title": "Research Receipt",
-  "description": "A hash-linked local consistency and replay record. Schema validation does not authenticate approval, validate hashes against content, or prove replay truth.",
+  "description": "A hash-linked local consistency and replay record. Only transitionHumanDecisionRecord with action APPROVE may authorize canonical transitions. execution_completed is true iff at least one execution_record has observed_outcome COMPLETED.",
   "type": "object",
   "required": [
     "id",
@@ -72,12 +72,7 @@
       },
       "additionalProperties": false
     },
-    "human_approval_record": {
-      "oneOf": [
-        { "$ref": "common.schema.json#/$defs/humanApproval" },
-        { "type": "null" }
-      ]
-    },
+    "human_approval_record": { "$ref": "common.schema.json#/$defs/transitionHumanDecisionRecord" },
     "post_state_hash": { "$ref": "common.schema.json#/$defs/nullableHash" },
     "tools_used": {
       "type": "array",
@@ -93,6 +88,11 @@
     "replay_instructions": { "$ref": "common.schema.json#/$defs/replayInstructions" },
     "replay_result": { "$ref": "common.schema.json#/$defs/replayResult" },
     "execution_completed": { "type": "boolean" },
+    "execution_records": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/executionRecord" },
+      "uniqueItems": true
+    },
     "evidence_recorded": { "type": "boolean" },
     "verifier_obligation_satisfied": { "type": "boolean" },
     "transition_authorized": { "type": "boolean" },
@@ -124,24 +124,13 @@
       }
     },
     {
-      "if": { "properties": { "decision": { "type": "object", "properties": { "verdict": { "const": "APPROVE" } }, "required": ["verdict"] } }, "required": ["decision"] },
-      "then": {
-        "properties": {
-          "verifier_obligation_satisfied": { "const": true },
-          "verifier_results": { "$ref": "common.schema.json#/$defs/authorizedVerifierResults" },
-          "mandatory_gate_summary": { "$ref": "common.schema.json#/$defs/satisfiedMandatoryGateSummary" },
-          "human_approval_record": { "$ref": "common.schema.json#/$defs/approvingHumanApproval" }
-        }
-      }
-    },
-    {
       "if": { "properties": { "transition_authorized": { "const": true } }, "required": ["transition_authorized"] },
       "then": {
         "properties": {
           "verifier_results": { "$ref": "common.schema.json#/$defs/authorizedVerifierResults" },
           "mandatory_gate_summary": { "$ref": "common.schema.json#/$defs/satisfiedMandatoryGateSummary" },
           "decision": { "properties": { "verdict": { "const": "APPROVE" } } },
-          "human_approval_record": { "$ref": "common.schema.json#/$defs/approvingHumanApproval" },
+          "human_approval_record": { "$ref": "common.schema.json#/$defs/transitionHumanDecisionRecord" },
           "verifier_obligation_satisfied": { "const": true },
           "replay_instructions": { "$ref": "common.schema.json#/$defs/completeReplayInstructions" }
         }
@@ -155,8 +144,8 @@
           "verifier_obligation_satisfied": { "const": true },
           "verifier_results": { "$ref": "common.schema.json#/$defs/authorizedVerifierResults" },
           "mandatory_gate_summary": { "$ref": "common.schema.json#/$defs/satisfiedMandatoryGateSummary" },
-          "decision": { "properties": { "verdict": { "const": "APPROVE" } }, "required": ["verdict"] },
-          "human_approval_record": { "$ref": "common.schema.json#/$defs/approvingHumanApproval" },
+          "decision": { "properties": { "verdict": { "const": "APPROVE" } } },
+          "human_approval_record": { "$ref": "common.schema.json#/$defs/transitionHumanDecisionRecord" },
           "post_state_hash": { "$ref": "common.schema.json#/$defs/hash" },
           "tools_used": { "minItems": 1 },
           "workers": {
@@ -186,6 +175,28 @@
     {
       "if": { "properties": { "human_approval_record": { "type": "object", "properties": { "action": { "const": "REJECT" } }, "required": ["action"] } }, "required": ["human_approval_record"] },
       "then": { "properties": { "transition_authorized": { "const": false }, "canonical_state_committed": { "const": false } } }
+    },
+    {
+      "if": { "properties": { "execution_completed": { "const": true } }, "required": ["execution_completed"] },
+      "then": {
+        "properties": {
+          "execution_records": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution_completed": { "const": false } }, "required": ["execution_completed"] },
+      "then": {
+        "properties": {
+          "execution_records": {
+            "not": {
+              "contains": {
+                "properties": { "observed_outcome": { "const": "COMPLETED" } }
+              }
+            }
+          }
+        }
+      }
     }
   ],
   "additionalProperties": false
