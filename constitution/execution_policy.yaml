@@ -1,0 +1,58 @@
+schema_version: "0.1.0"
+policy_id: execution_policy
+sandbox:
+  required: true
+  isolation_required: true
+network:
+  default: DENY
+  explicit_allowlist_required: true
+tools:
+  default: DENY
+  allowlist_required: true
+  allowlisted_tools: []
+determinism:
+  deterministic_seed_required_where_possible: true
+  nondeterminism_must_be_declared: true
+environment_capture:
+  exact_environment_required: true
+  tool_versions_required: true
+  worker_versions_required: true
+  tool_versions_bound_to_tool_ids: true
+  worker_versions_bound_to_worker_ids: true
+resources:
+  budget_required: true
+  timeout_required: true
+  timeout_recording_required: true
+artifacts:
+  raw_artifacts_immutable: true
+  stdout_capture_record_required: true
+  stderr_capture_record_required: true
+  produced_stdout_must_be_captured: true
+  produced_stderr_must_be_captured: true
+  capture_not_applicable_requires_reason: true
+  content_hashes_required: true
+result_outcomes:
+  COMPLETED: EXECUTION_FACTS_ALLOWED
+  FAILED: FAILURE_CLASSIFICATION_AND_PARTIAL_OR_NEGATIVE_EVIDENCE
+  TIMED_OUT: TIMEOUT_RECORD_AND_PARTIAL_OR_NEGATIVE_EVIDENCE
+  CANCELLED: FAILURE_CLASSIFICATION_AND_PARTIAL_OR_NEGATIVE_EVIDENCE
+  NOT_RUN: NO_EXECUTION_DERIVED_EVIDENCE
+  UNSUPPORTED: ADMINISTRATIVE_OR_CAPABILITY_DIAGNOSTIC_EVIDENCE_ONLY
+failures:
+  classification_required: true
+  retained_as_evidence: true
+  may_generate_negative_evidence: true
+authority:
+  result_self_interpretation_allowed: false
+  result_self_approval_allowed: false
+  execution_success_is_verification: false
+  execution_failure_precludes_knowledge: false
+invariants:
+  - EXEC-SANDBOX-REQUIRED
+  - EXEC-NETWORK-DENY-DEFAULT
+  - EXEC-BUDGET-AND-TIMEOUT
+  - EXEC-RAW-ARTIFACTS-IMMUTABLE
+  - EXEC-OUTPUTS-CAPTURED
+  - EXEC-NO-SELF-INTERPRETATION
+  - EXEC-SUCCESS-NOT-VERIFICATION
+  - EXEC-FAILURE-CAN-BE-EVIDENCE

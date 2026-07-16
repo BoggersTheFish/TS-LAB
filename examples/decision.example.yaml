@@ -1,0 +1,97 @@
+id: decision:dec24c.fixture.commit-negative-diagnostic
+schema_version: "0.1.0"
+transition_proposal: transition:dec24c.fixture.negative-diagnostic
+transition_type: COMMIT_NEGATIVE_DIAGNOSTIC
+version_transition: null
+branch_lifecycle_change: null
+verdict: APPROVE
+rationale: Approve only the scoped negative diagnostic, retained failed-gate Evidence, target rejection, and bounded follow-up Obligation.
+evidence_considered:
+  - evidence:dec24c.fixture.leakage-observation
+challenges_considered:
+  - challenge:dec24c.fixture.failed-emergence-gate
+verifier_results:
+  - obligation_id: transition-gates:dec24c-negative-diagnostic
+    verifier: &verifier
+      id: verifier:phase0-contract-fixture
+      role: TRANSITION_VERIFIER
+      version: fixture-0.1
+      ruleset_hash: sha256:6666666666666666666666666666666666666666666666666666666666666666
+    mandatory: true
+    outcome: PASS
+    evidence:
+      - evidence:dec24c.fixture.leakage-observation
+    explanation: The local records preserve the failed gates and do not promote the target Claim.
+    result_hash: sha256:1212121212121212121212121212121212121212121212121212121212121212
+mandatory_gate_summary:
+  all_satisfied: true
+  results:
+    - gate_id: gate:negative-diagnostic-classification
+      mandatory: true
+      outcome: PASS
+      verifier: *verifier
+      evidence:
+        - evidence:dec24c.fixture.leakage-observation
+      explanation: The proposed Claim is limited to negative diagnostic knowledge.
+    - gate_id: gate:no-target-promotion
+      mandatory: true
+      outcome: PASS
+      verifier: *verifier
+      evidence:
+        - evidence:dec24c.fixture.leakage-observation
+      explanation: The full-emergence target is not promoted.
+human_approval:
+  governance_record_id: governance:dec24c.fixture.approval
+  approver:
+    id: human:phase0-governor
+    role: HUMAN_GOVERNOR
+    version: fixture-0.1
+  action: APPROVE
+  approved_at: "2026-01-01T00:07:00Z"
+  policy_id: human_governance
+  approval_hash: sha256:5555555555555555555555555555555555555555555555555555555555555555
+  limitations:
+    - Approval is limited to the negative diagnostic and bounded Obligation.
+decided_effects:
+  - action: COMMIT
+    object:
+      object_type: Claim
+      id: claim:dec24c.fixture.obstruction-persists
+      canonical_hash: sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+    effect_description: Commit only the scoped negative diagnostic Claim.
+    effect_hash: sha256:abababababababababababababababababababababababababababababababab
+  - action: REJECT
+    object:
+      object_type: Claim
+      id: claim:dec24c.full-emergence
+      canonical_hash: sha256:8888888888888888888888888888888888888888888888888888888888888888
+    effect_description: Reject promotion of the target emergence interpretation.
+    effect_hash: sha256:bcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
+  - action: CREATE
+    object:
+      object_type: Obligation
+      id: obligation:dec24c.fixture.explain-obstruction
+      canonical_hash: sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+    effect_description: Open the bounded obstruction-analysis Obligation.
+    effect_hash: sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd
+  - action: RETAIN
+    object:
+      object_type: Evidence
+      id: evidence:dec24c.fixture.leakage-observation
+      canonical_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    effect_description: Keep the failed-gate Evidence permanently referenceable.
+    effect_hash: sha256:dededededededededededededededededededededededededededededededede
+producer:
+  id: reviewer:phase0-hostile-review
+  role: REVIEWER
+  version: fixture-0.1
+provenance:
+  method: Recorded the verifier-backed, human-governed disposition of the transition proposal.
+  sources:
+    - source_uri: fixture://dec24c/transition/negative-diagnostic
+      source_type: TRANSITION
+      relation: decides
+      content_hash: sha256:2222222222222222222222222222222222222222222222222222222222222222
+created_at: "2026-01-01T00:07:10Z"
+canonical_hash: sha256:1616161616161616161616161616161616161616161616161616161616161616
+extensions: {}

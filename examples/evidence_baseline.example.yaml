@@ -1,0 +1,25 @@
+id: evidence:dec24c.fixture.earlier-run
+schema_version: "0.1.0"
+evidence_kind: ABSTRACT_BASELINE_REFERENCE
+evidence_classification: EXTERNAL_DOCUMENTARY
+source_uri: fixture://dec24c/evidence/earlier-run
+content_hash: sha256:1919191919191919191919191919191919191919191919191919191919191919
+producer:
+  id: source:phase0-fixture
+  role: EXTERNAL_SOURCE
+  version: fixture-0.1
+provenance:
+  method: Declared abstract baseline for qualitative schema comparison only.
+  sources:
+    - source_uri: fixture://dec24c/source/earlier-run
+      source_type: EXTERNAL_SOURCE
+      relation: abstract_baseline
+inputs: []
+created_at: "2026-01-01T00:00:10Z"
+evidence_origin: EXTERNAL
+immutable_once_canonically_referenced: true
+canonical_hash: sha256:2020202020202020202020202020202020202020202020202020202020202020
+extensions:
+  org.ts-lab.fixture:
+    empirical_value_present: false
+    purpose: qualitative baseline reference

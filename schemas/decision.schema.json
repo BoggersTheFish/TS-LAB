@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/decision.schema.json",
+  "title": "Decision",
+  "description": "A locally coherent disposition. APPROVE requires passing mandatory verifier results, a satisfied gate summary, and explicit human APPROVE.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "transition_proposal",
+    "transition_type",
+    "version_transition",
+    "branch_lifecycle_change",
+    "verdict",
+    "rationale",
+    "evidence_considered",
+    "challenges_considered",
+    "verifier_results",
+    "mandatory_gate_summary",
+    "human_approval",
+    "decided_effects",
+    "producer",
+    "provenance",
+    "created_at",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/decisionId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "transition_proposal": { "$ref": "common.schema.json#/$defs/transitionProposalId" },
+    "transition_type": { "$ref": "common.schema.json#/$defs/transitionType" },
+    "version_transition": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/versionTransition" },
+        { "type": "null" }
+      ]
+    },
+    "branch_lifecycle_change": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/branchLifecycleChange" },
+        { "type": "null" }
+      ]
+    },
+    "verdict": { "$ref": "common.schema.json#/$defs/decisionVerdict" },
+    "rationale": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "evidence_considered": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/evidenceId" },
+      "uniqueItems": true
+    },
+    "challenges_considered": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/challengeId" },
+      "uniqueItems": true
+    },
+    "verifier_results": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/verifierResult" }
+    },
+    "mandatory_gate_summary": { "$ref": "common.schema.json#/$defs/mandatoryGateSummary" },
+    "human_approval": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/humanApproval" },
+        { "type": "null" }
+      ]
+    },
+    "decided_effects": { "$ref": "common.schema.json#/$defs/transitionEffectSet" },
+    "producer": { "$ref": "common.schema.json#/$defs/identity" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "transition_type": { "not": { "enum": ["NARROW_CLAIM_SCOPE", "BROADEN_CLAIM_SCOPE", "STRENGTHEN_EVIDENCE", "SUPERSEDE_CLAIM", "SUPERSEDE_ASSUMPTION"] } } }, "required": ["transition_type"] },
+      "then": { "properties": { "version_transition": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "not": { "enum": ["CREATE_BRANCH", "OPEN_BRANCH", "ACTIVATE_BRANCH", "FREEZE_BRANCH", "MERGE_BRANCH", "ABANDON_BRANCH", "CLOSE_BRANCH"] } } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "enum": ["NARROW_CLAIM_SCOPE", "BROADEN_CLAIM_SCOPE", "STRENGTHEN_EVIDENCE", "SUPERSEDE_CLAIM"] } }, "required": ["transition_type"] },
+      "then": { "properties": { "version_transition": { "allOf": [{ "$ref": "common.schema.json#/$defs/versionTransition" }, { "properties": { "prior_object": { "properties": { "object_type": { "const": "Claim" } } }, "replacement_object": { "properties": { "object_type": { "const": "Claim" } } } } }] } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "NARROW_CLAIM_SCOPE" } }, "required": ["transition_type"] },
+      "then": { "properties": { "version_transition": { "properties": { "relationship": { "const": "NARROWER_SCOPE" } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "BROADEN_CLAIM_SCOPE" } }, "required": ["transition_type"] },
+      "then": { "properties": { "version_transition": { "properties": { "relationship": { "const": "BROADER_SCOPE" } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "STRENGTHEN_EVIDENCE" } }, "required": ["transition_type"] },
+      "then": { "properties": { "version_transition": { "properties": { "relationship": { "const": "STRENGTHENED_SUPPORT" } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "SUPERSEDE_CLAIM" } }, "required": ["transition_type"] },
+      "then": { "properties": { "version_transition": { "properties": { "relationship": { "const": "SUPERSEDES_CLAIM" } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "SUPERSEDE_ASSUMPTION" } }, "required": ["transition_type"] },
+      "then": { "properties": { "version_transition": { "allOf": [{ "$ref": "common.schema.json#/$defs/versionTransition" }, { "properties": { "relationship": { "const": "SUPERSEDES_ASSUMPTION" }, "prior_object": { "properties": { "object_type": { "const": "Assumption" } } }, "replacement_object": { "properties": { "object_type": { "const": "Assumption" } } } } }] } } }
+    },
+    {
+      "if": { "properties": { "decided_effects": { "contains": { "properties": { "action": { "const": "OPEN" } }, "required": ["action"] } } }, "required": ["decided_effects"] },
+      "then": { "properties": { "transition_type": { "const": "OPEN_BRANCH" } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "enum": ["CREATE_BRANCH", "OPEN_BRANCH", "ACTIVATE_BRANCH", "FREEZE_BRANCH", "MERGE_BRANCH", "ABANDON_BRANCH", "CLOSE_BRANCH"] } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "$ref": "common.schema.json#/$defs/branchLifecycleChange" }, "decided_effects": { "minItems": 1, "maxItems": 1, "items": { "properties": { "object": { "properties": { "object_type": { "const": "Branch" } } } } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "CREATE_BRANCH" } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "properties": { "previous_state": { "type": "null" }, "next_state": { "const": "PROPOSED" } } }, "decided_effects": { "items": { "properties": { "action": { "const": "CREATE" } } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "OPEN_BRANCH" } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "properties": { "previous_state": { "const": "PROPOSED" }, "next_state": { "const": "OPEN" } } }, "decided_effects": { "items": { "properties": { "action": { "const": "OPEN" } } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "ACTIVATE_BRANCH" } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "properties": { "previous_state": { "enum": ["OPEN", "FROZEN"] }, "next_state": { "const": "ACTIVE" } } }, "decided_effects": { "items": { "properties": { "action": { "const": "ACTIVATE" } } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "FREEZE_BRANCH" } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "properties": { "previous_state": { "const": "ACTIVE" }, "next_state": { "const": "FROZEN" } } }, "decided_effects": { "items": { "properties": { "action": { "const": "FREEZE" } } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "MERGE_BRANCH" } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "properties": { "previous_state": { "enum": ["ACTIVE", "FROZEN"] }, "next_state": { "const": "MERGED" } } }, "decided_effects": { "items": { "properties": { "action": { "const": "MERGE" } } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "ABANDON_BRANCH" } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "properties": { "previous_state": { "enum": ["PROPOSED", "OPEN", "ACTIVE", "FROZEN"] }, "next_state": { "const": "ABANDONED" } } }, "decided_effects": { "items": { "properties": { "action": { "const": "ABANDON" } } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "CLOSE_BRANCH" } }, "required": ["transition_type"] },
+      "then": { "properties": { "branch_lifecycle_change": { "properties": { "previous_state": { "enum": ["MERGED", "ABANDONED"] }, "next_state": { "const": "CLOSED" } } }, "decided_effects": { "items": { "properties": { "action": { "const": "CLOSE" } } } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "PROPOSE_CLAIM" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "$ref": "transition_proposal.schema.json#/$defs/claimCreateEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "COMMIT_CLAIM" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/claimRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/challengeRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, "maxContains": 1 } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "STRENGTHEN_EVIDENCE" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceAddOrRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, "maxContains": 1, "allOf": [{ "contains": { "$ref": "transition_proposal.schema.json#/$defs/evidenceAddOrRetainEffect" } }] } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "NARROW_CLAIM_SCOPE" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/challengeRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, "maxContains": 1 } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "BROADEN_CLAIM_SCOPE" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/claimRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceAddOrRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/challengeRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, "maxContains": 1, "allOf": [{ "contains": { "$ref": "transition_proposal.schema.json#/$defs/evidenceAddOrRetainEffect" } }] } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "QUARANTINE_INTERPRETATION" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimQuarantineEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/claimRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/challengeRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimQuarantineEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "REJECT_CLAIM" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimRejectEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/claimRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/challengeRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimRejectEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "SUPERSEDE_CLAIM" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/challengeRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, "maxContains": 1 } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "RETRACT_CLAIM" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimRetractEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/claimRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/challengeRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimRetractEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "COMMIT_NEGATIVE_DIAGNOSTIC" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "oneOf": [{ "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/claimRejectEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/claimRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/obligationCreateEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/evidenceRetainEffect" }, { "$ref": "transition_proposal.schema.json#/$defs/challengeRetainEffect" }] }, "contains": { "$ref": "transition_proposal.schema.json#/$defs/claimCommitEffect" }, "maxContains": 1 } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "CREATE_OBLIGATION" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "$ref": "transition_proposal.schema.json#/$defs/obligationCreateEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "CLOSE_OBLIGATION_SATISFIED" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "$ref": "transition_proposal.schema.json#/$defs/obligationCloseSatisfiedEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "CLOSE_OBLIGATION_KILLED" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "$ref": "transition_proposal.schema.json#/$defs/obligationCloseKilledEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "ADOPT_ASSUMPTION" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "minItems": 1, "maxItems": 1, "items": { "$ref": "transition_proposal.schema.json#/$defs/assumptionAdoptEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "SUPERSEDE_ASSUMPTION" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "minItems": 1, "maxItems": 1, "items": { "$ref": "transition_proposal.schema.json#/$defs/assumptionAdoptEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "RETRACT_ASSUMPTION" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "minItems": 1, "maxItems": 1, "items": { "$ref": "transition_proposal.schema.json#/$defs/assumptionRetractEffect" } } } }
+    },
+    {
+      "if": { "properties": { "transition_type": { "const": "NO_CANONICAL_CHANGE" } }, "required": ["transition_type"] },
+      "then": { "properties": { "decided_effects": { "items": { "properties": { "action": { "enum": ["RETAIN", "NO_CHANGE"] } } } } } }
+    },
+    {
+      "if": { "properties": { "verdict": { "const": "APPROVE" } }, "required": ["verdict"] },
+      "then": {
+        "properties": {
+          "verifier_results": { "$ref": "common.schema.json#/$defs/authorizedVerifierResults" },
+          "mandatory_gate_summary": { "$ref": "common.schema.json#/$defs/satisfiedMandatoryGateSummary" },
+          "human_approval": { "$ref": "common.schema.json#/$defs/approvingHumanApproval" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "human_approval": { "type": "object", "properties": { "action": { "const": "REJECT" } }, "required": ["action"] } }, "required": ["human_approval"] },
+      "then": { "properties": { "verdict": { "not": { "const": "APPROVE" } } } }
+    }
+  ],
+  "additionalProperties": false
+}

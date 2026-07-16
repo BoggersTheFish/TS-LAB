@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/evidence.schema.json",
+  "title": "Evidence",
+  "description": "An immutable, non-authoritative artifact or observation. Evidence has no field that declares truth, approval, interpretation, or canonical effect.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "evidence_kind",
+    "evidence_classification",
+    "source_uri",
+    "content_hash",
+    "producer",
+    "provenance",
+    "inputs",
+    "created_at",
+    "evidence_origin",
+    "immutable_once_canonically_referenced",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/evidenceId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "evidence_kind": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "evidence_classification": { "$ref": "common.schema.json#/$defs/evidenceClassification" },
+    "source_uri": { "$ref": "common.schema.json#/$defs/absoluteUri" },
+    "content_hash": { "$ref": "common.schema.json#/$defs/hash" },
+    "producer": { "$ref": "common.schema.json#/$defs/identity" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "inputs": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/canonicalObjectReference" },
+      "uniqueItems": true
+    },
+    "environment": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/environment" },
+        { "type": "null" }
+      ]
+    },
+    "source_commit": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/hash" },
+        { "type": "null" }
+      ]
+    },
+    "deterministic_seed": { "type": ["integer", "null"] },
+    "nondeterminism_declaration": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/nonBlankString" },
+        { "type": "null" }
+      ]
+    },
+    "tools_used": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/toolBinding" },
+      "uniqueItems": true
+    },
+    "execution_capture": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/executionCapture" },
+        { "type": "null" }
+      ]
+    },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "evidence_origin": { "$ref": "common.schema.json#/$defs/evidenceOrigin" },
+    "immutable_once_canonically_referenced": { "const": true },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "evidence_classification": { "enum": ["SCIENTIFIC_EXECUTION", "NEGATIVE_DIAGNOSTIC", "PARTIAL_EXECUTION"] } }, "required": ["evidence_classification"] },
+      "then": {
+        "required": ["environment", "deterministic_seed", "nondeterminism_declaration", "tools_used", "execution_capture"],
+        "properties": {
+          "environment": { "$ref": "common.schema.json#/$defs/environment" },
+          "execution_capture": { "$ref": "common.schema.json#/$defs/executionCapture" },
+          "producer": {
+            "allOf": [
+              { "$ref": "common.schema.json#/$defs/identity" },
+              { "type": "object", "required": ["implementation_hash"] }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "deterministic_seed": { "type": "null" } }, "required": ["deterministic_seed"] },
+      "then": { "properties": { "nondeterminism_declaration": { "$ref": "common.schema.json#/$defs/nonBlankString" } } }
+    }
+  ],
+  "additionalProperties": false
+}

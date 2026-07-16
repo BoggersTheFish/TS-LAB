@@ -1,0 +1,966 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/common.schema.json",
+  "title": "TS-LAB common contract definitions",
+  "description": "Shared Phase 0 Draft 2020-12 definitions. Schema checks are local structural checks; canonical hashes, identities, references, history, and replay truth require a future transition verifier.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false,
+  "$defs": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "nonBlankString": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "nonEmptyString": {
+      "$ref": "#/$defs/nonBlankString"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]+)?Z$",
+      "description": "Canonical RFC 3339 UTC timestamp with an uppercase trailing Z."
+    },
+    "absoluteUri": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$",
+      "description": "Absolute URI with a scheme. Hierarchical and non-hierarchical schemes are both permitted; relative references and whitespace are rejected."
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "nullableHash": {
+      "oneOf": [
+        { "$ref": "#/$defs/hash" },
+        { "type": "null" }
+      ]
+    },
+    "canonicalHash": {
+      "allOf": [
+        { "$ref": "#/$defs/hash" }
+      ],
+      "description": "Deterministic SHA-256 of canonical serialized content with the object's own canonical hash field omitted. Phase 0 validates only the lexical form."
+    },
+    "epistemicClass": {
+      "type": "string",
+      "enum": [
+        "ESTABLISHED",
+        "REPRODUCTION",
+        "SUBSTRATE_DERIVED",
+        "CONDITIONAL_CONSTRUCTION",
+        "NEGATIVE_DIAGNOSTIC",
+        "HYPOTHESIS",
+        "ANSATZ",
+        "FAILED",
+        "KILL_CONDITION"
+      ]
+    },
+    "transactionState": {
+      "type": "string",
+      "enum": [
+        "CANDIDATE",
+        "UNDER_REVIEW",
+        "COMMITTED",
+        "QUARANTINED",
+        "REJECTED",
+        "SUPERSEDED",
+        "RETRACTED"
+      ]
+    },
+    "branchLifecycle": {
+      "type": "string",
+      "enum": [
+        "PROPOSED",
+        "OPEN",
+        "ACTIVE",
+        "FROZEN",
+        "MERGED",
+        "ABANDONED",
+        "CLOSED"
+      ]
+    },
+    "engineeringMaturity": {
+      "type": "string",
+      "enum": [
+        "SPECIFIED",
+        "IMPLEMENTED",
+        "TESTED",
+        "REPRODUCED",
+        "RELEASED"
+      ]
+    },
+    "gateOutcome": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "UNKNOWN", "UNSUPPORTED", "ERROR", "MISSING"]
+    },
+    "evidenceOrigin": {
+      "type": "string",
+      "enum": ["RAW", "DERIVED", "REPRODUCED", "EXTERNAL"]
+    },
+    "scopeChangeClassification": {
+      "type": "string",
+      "enum": ["SAME_SCOPE", "NARROWER_SCOPE", "BROADER_SCOPE", "NOT_APPLICABLE"]
+    },
+    "transitionType": {
+      "type": "string",
+      "enum": [
+        "PROPOSE_CLAIM",
+        "COMMIT_CLAIM",
+        "STRENGTHEN_EVIDENCE",
+        "NARROW_CLAIM_SCOPE",
+        "BROADEN_CLAIM_SCOPE",
+        "QUARANTINE_INTERPRETATION",
+        "REJECT_CLAIM",
+        "SUPERSEDE_CLAIM",
+        "RETRACT_CLAIM",
+        "COMMIT_NEGATIVE_DIAGNOSTIC",
+        "CREATE_OBLIGATION",
+        "CLOSE_OBLIGATION_SATISFIED",
+        "CLOSE_OBLIGATION_KILLED",
+        "ADOPT_ASSUMPTION",
+        "SUPERSEDE_ASSUMPTION",
+        "RETRACT_ASSUMPTION",
+        "CREATE_BRANCH",
+        "OPEN_BRANCH",
+        "ACTIVATE_BRANCH",
+        "FREEZE_BRANCH",
+        "MERGE_BRANCH",
+        "ABANDON_BRANCH",
+        "CLOSE_BRANCH",
+        "NO_CANONICAL_CHANGE"
+      ]
+    },
+    "transitionEffectAction": {
+      "type": "string",
+      "enum": [
+        "CREATE",
+        "COMMIT",
+        "ADOPT",
+        "ACTIVATE",
+        "OPEN",
+        "FREEZE",
+        "MERGE",
+        "ABANDON",
+        "CLOSE",
+        "QUARANTINE",
+        "REJECT",
+        "SUPERSEDE",
+        "RETRACT",
+        "CLOSE_SATISFIED",
+        "CLOSE_KILLED",
+        "RETAIN",
+        "NO_CHANGE"
+      ]
+    },
+    "decisionVerdict": {
+      "type": "string",
+      "enum": ["APPROVE", "REJECT", "NARROW", "QUARANTINE", "NO_CANONICAL_CHANGE"]
+    },
+    "executionOutcome": {
+      "type": "string",
+      "enum": ["NOT_RUN", "COMPLETED", "FAILED", "TIMED_OUT", "CANCELLED", "UNSUPPORTED"]
+    },
+    "challengeDisposition": {
+      "type": "string",
+      "enum": ["OPEN", "SUSTAINED", "RESOLVED", "REJECTED", "SUPERSEDED"]
+    },
+    "identityRole": {
+      "type": "string",
+      "enum": [
+        "HUMAN_GOVERNOR",
+        "INVESTIGATOR",
+        "PROPOSER",
+        "EXPERIMENT_RUNNER",
+        "REVIEWER",
+        "TRANSITION_VERIFIER",
+        "GENERATOR",
+        "RENDERER",
+        "SYSTEM",
+        "TOOL",
+        "EXTERNAL_SOURCE"
+      ]
+    },
+    "identity": {
+      "type": "object",
+      "required": ["id", "role", "version"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*:[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "role": { "$ref": "#/$defs/identityRole" },
+        "version": { "$ref": "#/$defs/nonBlankString" },
+        "implementation_hash": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false
+    },
+    "verifierIdentity": {
+      "type": "object",
+      "required": ["id", "role", "version", "ruleset_hash"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^verifier:[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "role": { "const": "TRANSITION_VERIFIER" },
+        "version": { "$ref": "#/$defs/nonBlankString" },
+        "ruleset_hash": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false
+    },
+    "provenanceSource": {
+      "type": "object",
+      "required": ["source_uri", "source_type", "relation"],
+      "properties": {
+        "source_uri": { "$ref": "#/$defs/absoluteUri" },
+        "source_type": {
+          "type": "string",
+          "enum": [
+            "USER_INPUT",
+            "DOCUMENT",
+            "EVIDENCE",
+            "DERIVATION",
+            "EXPERIMENT",
+            "RESULT",
+            "EXTERNAL_SOURCE",
+            "SYSTEM_SEED",
+            "TRANSITION",
+            "RECEIPT"
+          ]
+        },
+        "relation": { "$ref": "#/$defs/nonBlankString" },
+        "content_hash": { "$ref": "#/$defs/hash" },
+        "accessed_at": { "$ref": "#/$defs/timestamp" }
+      },
+      "additionalProperties": false
+    },
+    "provenance": {
+      "type": "object",
+      "required": ["method", "sources"],
+      "properties": {
+        "method": { "$ref": "#/$defs/nonBlankString" },
+        "sources": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/provenanceSource" }
+        },
+        "notes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonBlankString" },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "scope": {
+      "type": "object",
+      "required": ["domain", "boundaries"],
+      "properties": {
+        "domain": { "$ref": "#/$defs/nonBlankString" },
+        "boundaries": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonBlankString" },
+          "uniqueItems": true
+        },
+        "exclusions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonBlankString" },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "reservedExtensionKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]*$",
+      "not": {
+        "pattern": "(accept|approv|authori[sz]|authority|authoritative|confidence|verif|validat|proof|prov(?:e|es|ed|en|ing)|truth|decision|transition|commit|canonical|human[_.-]?approval|receipt|epistemic|transaction[_.-]?state|status|establish|reproduction|substrate[_.-]?derived|conditional[_.-]?construction|negative[_.-]?diagnostic|hypothesis|ansatz|kill[_.-]?condition|candidate|under[_.-]?review|quarantin|reject|supersed|retract|specified|implemented|tested|reproduced|released|pass|fail|unknown|unsupported|error|missing)"
+      }
+    },
+    "extensionNamespaceKey": {
+      "allOf": [
+        { "$ref": "#/$defs/reservedExtensionKey" },
+        { "pattern": "^[a-z][a-z0-9]*(?:[.-][a-z][a-z0-9_-]*)+$" }
+      ]
+    },
+    "extensions": {
+      "type": "object",
+      "propertyNames": { "$ref": "#/$defs/extensionNamespaceKey" },
+      "additionalProperties": { "$ref": "#/$defs/extensionValue" },
+      "description": "Non-authoritative metadata. Every structured key is recursively screened; consumers must ignore all extension values for authority, truth, status, and canonical effects."
+    },
+    "extensionValue": {
+      "oneOf": [
+        {
+          "type": "string",
+          "pattern": "^[^A-Z]*$",
+          "not": {
+            "pattern": "(accept|approv|authori[sz]|authority|authoritative|confidence|verif|validat|proof|prov(?:e|es|ed|en|ing)|truth|decision|transition|commit|canonical|human[_. -]?approval|receipt|epistemic|transaction[_. -]?state|status|establish|reproduction|substrate[_. -]?derived|conditional[_. -]?construction|negative[_. -]?diagnostic|hypothesis|ansatz|kill[_. -]?condition|candidate|under[_. -]?review|quarantin|reject|supersed|retract|specified|implemented|tested|reproduced|released|pass|fail|unknown|unsupported|error|missing)"
+          }
+        },
+        { "type": ["number", "boolean", "null"] },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/extensionValue" }
+        },
+        {
+          "type": "object",
+          "propertyNames": { "$ref": "#/$defs/reservedExtensionKey" },
+          "additionalProperties": { "$ref": "#/$defs/extensionValue" }
+        }
+      ]
+    },
+    "definitionId": { "type": "string", "pattern": "^definition:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "assumptionId": { "type": "string", "pattern": "^assumption:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "evidenceId": { "type": "string", "pattern": "^evidence:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "claimId": { "type": "string", "pattern": "^claim:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "obligationId": { "type": "string", "pattern": "^obligation:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "experimentId": { "type": "string", "pattern": "^experiment:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "resultId": { "type": "string", "pattern": "^result:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "challengeId": { "type": "string", "pattern": "^challenge:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "decisionId": { "type": "string", "pattern": "^decision:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "branchId": { "type": "string", "pattern": "^branch:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "transitionProposalId": { "type": "string", "pattern": "^transition:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "researchReceiptId": { "type": "string", "pattern": "^receipt:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "governanceRecordId": { "type": "string", "pattern": "^governance:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "gateId": { "type": "string", "pattern": "^gate:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+    "canonicalObjectReference": {
+      "type": "object",
+      "required": ["object_type", "id", "canonical_hash"],
+      "properties": {
+        "object_type": {
+          "type": "string",
+          "enum": [
+            "Evidence",
+            "Definition",
+            "Assumption",
+            "Claim",
+            "Obligation",
+            "Experiment",
+            "Result",
+            "Challenge",
+            "Decision",
+            "Branch",
+            "TransitionProposal",
+            "ResearchReceipt"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^(evidence|definition|assumption|claim|obligation|experiment|result|challenge|decision|branch|transition|receipt):[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "canonical_hash": { "$ref": "#/$defs/hash" }
+      },
+      "allOf": [
+        { "if": { "properties": { "object_type": { "const": "Evidence" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/evidenceId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Definition" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/definitionId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Assumption" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/assumptionId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Claim" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/claimId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Obligation" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/obligationId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Experiment" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/experimentId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Result" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/resultId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Challenge" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/challengeId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Decision" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/decisionId" } } } },
+        { "if": { "properties": { "object_type": { "const": "Branch" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/branchId" } } } },
+        { "if": { "properties": { "object_type": { "const": "TransitionProposal" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/transitionProposalId" } } } },
+        { "if": { "properties": { "object_type": { "const": "ResearchReceipt" } }, "required": ["object_type"] }, "then": { "properties": { "id": { "$ref": "#/$defs/researchReceiptId" } } } }
+      ],
+      "additionalProperties": false
+    },
+    "gateDefinition": {
+      "type": "object",
+      "required": ["id", "criterion", "evaluation_method", "pass_condition", "mandatory"],
+      "properties": {
+        "id": { "$ref": "#/$defs/gateId" },
+        "criterion": { "$ref": "#/$defs/nonBlankString" },
+        "evaluation_method": { "$ref": "#/$defs/nonBlankString" },
+        "pass_condition": { "$ref": "#/$defs/nonBlankString" },
+        "mandatory": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    },
+    "gateResult": {
+      "type": "object",
+      "required": ["gate_id", "mandatory", "outcome", "verifier", "evidence", "explanation"],
+      "properties": {
+        "gate_id": { "$ref": "#/$defs/gateId" },
+        "mandatory": { "type": "boolean" },
+        "outcome": { "$ref": "#/$defs/gateOutcome" },
+        "verifier": { "$ref": "#/$defs/verifierIdentity" },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceId" },
+          "uniqueItems": true
+        },
+        "explanation": { "$ref": "#/$defs/nonBlankString" }
+      },
+      "additionalProperties": false
+    },
+    "mandatoryPassingGateResult": {
+      "allOf": [
+        { "$ref": "#/$defs/gateResult" },
+        {
+          "type": "object",
+          "properties": {
+            "mandatory": { "const": true },
+            "outcome": { "const": "PASS" }
+          }
+        }
+      ]
+    },
+    "mandatoryGateSummary": {
+      "type": "object",
+      "required": ["all_satisfied", "results"],
+      "properties": {
+        "all_satisfied": { "type": "boolean" },
+        "results": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "allOf": [
+              { "$ref": "#/$defs/gateResult" },
+              { "type": "object", "properties": { "mandatory": { "const": true } } }
+            ]
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "all_satisfied": { "const": true } }, "required": ["all_satisfied"] },
+          "then": { "properties": { "results": { "items": { "$ref": "#/$defs/mandatoryPassingGateResult" } } } },
+          "else": {
+            "properties": {
+              "results": {
+                "contains": {
+                  "allOf": [
+                    { "$ref": "#/$defs/gateResult" },
+                    { "type": "object", "properties": { "mandatory": { "const": true }, "outcome": { "enum": ["FAIL", "UNKNOWN", "UNSUPPORTED", "ERROR", "MISSING"] } } }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "satisfiedMandatoryGateSummary": {
+      "type": "object",
+      "required": ["all_satisfied", "results"],
+      "properties": {
+        "all_satisfied": { "const": true },
+        "results": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/mandatoryPassingGateResult" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "humanApproval": {
+      "type": "object",
+      "required": ["governance_record_id", "approver", "action", "approved_at", "policy_id", "approval_hash"],
+      "properties": {
+        "governance_record_id": { "$ref": "#/$defs/governanceRecordId" },
+        "approver": {
+          "type": "object",
+          "required": ["id", "role", "version"],
+          "properties": {
+            "id": { "type": "string", "pattern": "^human:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+            "role": { "const": "HUMAN_GOVERNOR" },
+            "version": { "$ref": "#/$defs/nonBlankString" }
+          },
+          "additionalProperties": false
+        },
+        "action": { "type": "string", "enum": ["APPROVE", "NARROW", "REJECT"] },
+        "approved_at": { "$ref": "#/$defs/timestamp" },
+        "policy_id": { "type": "string", "enum": ["authority", "claim_policy", "execution_policy", "human_governance"] },
+        "approval_hash": { "$ref": "#/$defs/hash" },
+        "limitations": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/nonBlankString" },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "approvingHumanApproval": {
+      "allOf": [
+        { "$ref": "#/$defs/humanApproval" },
+        { "type": "object", "properties": { "action": { "const": "APPROVE" } } }
+      ]
+    },
+    "policyApproval": {
+      "type": "object",
+      "required": ["policy_id", "rule_id", "approved", "governance_record_id"],
+      "properties": {
+        "policy_id": { "const": "claim_policy" },
+        "rule_id": { "const": "CLAIM-LIMITATIONS-REQUIRED" },
+        "approved": { "const": true },
+        "governance_record_id": { "$ref": "#/$defs/governanceRecordId" }
+      },
+      "additionalProperties": false
+    },
+    "resourceBudget": {
+      "type": "object",
+      "required": ["wall_time_seconds", "cpu_seconds", "memory_bytes", "storage_bytes", "network_requests"],
+      "properties": {
+        "wall_time_seconds": { "type": "integer", "minimum": 1 },
+        "cpu_seconds": { "type": "integer", "minimum": 1 },
+        "memory_bytes": { "type": "integer", "minimum": 1 },
+        "storage_bytes": { "type": "integer", "minimum": 0 },
+        "network_requests": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "requiredOutput": {
+      "type": "object",
+      "required": ["output_type", "description", "inspection_method"],
+      "properties": {
+        "output_type": { "$ref": "#/$defs/nonBlankString" },
+        "description": { "$ref": "#/$defs/nonBlankString" },
+        "inspection_method": { "$ref": "#/$defs/nonBlankString" }
+      },
+      "additionalProperties": false
+    },
+    "stopCondition": {
+      "type": "object",
+      "required": ["condition", "trigger", "resulting_action"],
+      "properties": {
+        "condition": { "$ref": "#/$defs/nonBlankString" },
+        "trigger": { "$ref": "#/$defs/nonBlankString" },
+        "resulting_action": { "type": "string", "enum": ["STOP_SATISFIED", "STOP_KILLED", "STOP_BUDGET_EXHAUSTED", "STOP_UNSUPPORTED"] }
+      },
+      "additionalProperties": false
+    },
+    "environment": {
+      "type": "object",
+      "required": ["operating_system", "architecture", "runtime_versions", "environment_hash"],
+      "properties": {
+        "operating_system": { "$ref": "#/$defs/nonBlankString" },
+        "architecture": { "$ref": "#/$defs/nonBlankString" },
+        "runtime_versions": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": { "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$" },
+          "additionalProperties": { "$ref": "#/$defs/nonBlankString" }
+        },
+        "container_image": { "$ref": "#/$defs/nonBlankString" },
+        "environment_hash": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false
+    },
+    "executionType": {
+      "type": "string",
+      "enum": ["COMPUTATIONAL", "PHYSICAL", "DOCUMENTARY", "EXTERNAL_SERVICE"]
+    },
+    "evidenceClassification": {
+      "type": "string",
+      "enum": [
+        "SCIENTIFIC_EXECUTION",
+        "NEGATIVE_DIAGNOSTIC",
+        "PARTIAL_EXECUTION",
+        "ADMINISTRATIVE_DIAGNOSTIC",
+        "CAPABILITY_DIAGNOSTIC",
+        "EXTERNAL_DOCUMENTARY"
+      ],
+      "description": "Structural Evidence class. Administrative and capability diagnostics carry no scientific interpretation authority."
+    },
+    "toolBinding": {
+      "type": "object",
+      "required": ["tool_id", "version", "implementation_hash"],
+      "properties": {
+        "tool_id": {
+          "type": "string",
+          "pattern": "^tool:[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "version": { "$ref": "#/$defs/nonBlankString" },
+        "implementation_hash": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false
+    },
+    "workerBinding": {
+      "type": "object",
+      "required": ["worker_id", "role", "version", "implementation_hash", "responsibilities"],
+      "properties": {
+        "worker_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*:[a-zA-Z0-9][a-zA-Z0-9._-]*$"
+        },
+        "role": { "$ref": "#/$defs/identityRole" },
+        "version": { "$ref": "#/$defs/nonBlankString" },
+        "implementation_hash": { "$ref": "#/$defs/hash" },
+        "responsibilities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": ["EXECUTION", "EVIDENCE_RECORDING", "RECEIPT_RECORDING", "REPLAY_EXECUTION"]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "captureArtifactReference": {
+      "allOf": [
+        { "$ref": "#/$defs/canonicalObjectReference" },
+        {
+          "type": "object",
+          "properties": { "object_type": { "const": "Evidence" } }
+        }
+      ]
+    },
+    "streamCapture": {
+      "type": "object",
+      "required": ["capture_status", "artifact", "reason"],
+      "properties": {
+        "capture_status": { "type": "string", "enum": ["CAPTURED", "NOT_PRODUCED", "NOT_APPLICABLE"] },
+        "artifact": {
+          "oneOf": [
+            { "$ref": "#/$defs/captureArtifactReference" },
+            { "type": "null" }
+          ]
+        },
+        "reason": {
+          "oneOf": [
+            { "$ref": "#/$defs/nonBlankString" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "capture_status": { "const": "CAPTURED" } }, "required": ["capture_status"] },
+          "then": {
+            "properties": {
+              "artifact": { "$ref": "#/$defs/captureArtifactReference" },
+              "reason": { "type": "null" }
+            }
+          },
+          "else": {
+            "properties": {
+              "artifact": { "type": "null" },
+              "reason": { "$ref": "#/$defs/nonBlankString" }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "artifactSetCapture": {
+      "type": "object",
+      "required": ["capture_status", "artifacts", "reason"],
+      "properties": {
+        "capture_status": { "type": "string", "enum": ["CAPTURED", "NOT_PRODUCED", "NOT_APPLICABLE"] },
+        "artifacts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/captureArtifactReference" }
+        },
+        "reason": {
+          "oneOf": [
+            { "$ref": "#/$defs/nonBlankString" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "capture_status": { "const": "CAPTURED" } }, "required": ["capture_status"] },
+          "then": {
+            "properties": {
+              "artifacts": { "minItems": 1 },
+              "reason": { "type": "null" }
+            }
+          },
+          "else": {
+            "properties": {
+              "artifacts": { "maxItems": 0 },
+              "reason": { "$ref": "#/$defs/nonBlankString" }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "executionCapture": {
+      "type": "object",
+      "required": ["stdout", "stderr", "raw_artifacts", "environment_fingerprint"],
+      "properties": {
+        "stdout": { "$ref": "#/$defs/streamCapture" },
+        "stderr": { "$ref": "#/$defs/streamCapture" },
+        "raw_artifacts": { "$ref": "#/$defs/artifactSetCapture" },
+        "environment_fingerprint": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false,
+      "description": "Structural capture record. Artifact existence, contents, hashes, and immutability are future transition-verifier checks."
+    },
+    "timeoutRecord": {
+      "type": "object",
+      "required": ["configured_timeout_seconds", "elapsed_seconds", "timed_out_at", "termination_reason"],
+      "properties": {
+        "configured_timeout_seconds": { "type": "integer", "minimum": 1 },
+        "elapsed_seconds": { "type": "number", "minimum": 0 },
+        "timed_out_at": { "$ref": "#/$defs/timestamp" },
+        "termination_reason": { "$ref": "#/$defs/nonBlankString" }
+      },
+      "additionalProperties": false
+    },
+    "verifierResult": {
+      "type": "object",
+      "required": ["obligation_id", "verifier", "mandatory", "outcome", "evidence", "explanation", "result_hash"],
+      "properties": {
+        "obligation_id": { "$ref": "#/$defs/nonBlankString" },
+        "verifier": { "$ref": "#/$defs/verifierIdentity" },
+        "mandatory": { "type": "boolean" },
+        "outcome": { "$ref": "#/$defs/gateOutcome" },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceId" },
+          "uniqueItems": true
+        },
+        "explanation": { "$ref": "#/$defs/nonBlankString" },
+        "result_hash": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false
+    },
+    "authorizedVerifierResults": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "allOf": [
+          { "$ref": "#/$defs/verifierResult" },
+          {
+            "if": { "properties": { "mandatory": { "const": true } }, "required": ["mandatory"] },
+            "then": { "properties": { "outcome": { "const": "PASS" } } }
+          }
+        ]
+      },
+      "contains": {
+        "allOf": [
+          { "$ref": "#/$defs/verifierResult" },
+          { "type": "object", "properties": { "mandatory": { "const": true }, "outcome": { "const": "PASS" } } }
+        ]
+      },
+      "minContains": 1
+    },
+    "replayInstructions": {
+      "type": "object",
+      "required": ["deterministic", "procedure", "required_artifacts", "expected_parent_state_hash"],
+      "properties": {
+        "deterministic": { "const": true },
+        "procedure": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/nonBlankString" }
+        },
+        "required_artifacts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/hash" },
+          "uniqueItems": true
+        },
+        "expected_parent_state_hash": { "$ref": "#/$defs/hash" }
+      },
+      "additionalProperties": false
+    },
+    "completeReplayInstructions": {
+      "allOf": [
+        { "$ref": "#/$defs/replayInstructions" },
+        { "type": "object", "properties": { "required_artifacts": { "minItems": 1 } } }
+      ]
+    },
+    "replayResult": {
+      "type": "object",
+      "required": ["outcome", "replayed_at", "observed_post_state_hash", "details"],
+      "properties": {
+        "outcome": { "type": "string", "enum": ["PASSED", "FAILED", "NOT_RUN"] },
+        "replayed_at": {
+          "oneOf": [
+            { "$ref": "#/$defs/timestamp" },
+            { "type": "null" }
+          ]
+        },
+        "observed_post_state_hash": { "$ref": "#/$defs/nullableHash" },
+        "details": { "$ref": "#/$defs/nonBlankString" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "outcome": { "const": "PASSED" } }, "required": ["outcome"] },
+          "then": {
+            "properties": {
+              "replayed_at": { "$ref": "#/$defs/timestamp" },
+              "observed_post_state_hash": { "$ref": "#/$defs/hash" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "outcome": { "const": "FAILED" } }, "required": ["outcome"] },
+          "then": { "properties": { "replayed_at": { "$ref": "#/$defs/timestamp" } } }
+        },
+        {
+          "if": { "properties": { "outcome": { "const": "NOT_RUN" } }, "required": ["outcome"] },
+          "then": {
+            "properties": {
+              "replayed_at": { "type": "null" },
+              "observed_post_state_hash": { "type": "null" }
+            }
+          }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "passedReplayResult": {
+      "allOf": [
+        { "$ref": "#/$defs/replayResult" },
+        { "type": "object", "properties": { "outcome": { "const": "PASSED" } } }
+      ]
+    },
+    "executionGateObservation": {
+      "type": "object",
+      "required": ["gate_id", "mandatory", "outcome", "observation_status", "evidence", "observation"],
+      "properties": {
+        "gate_id": { "$ref": "#/$defs/gateId" },
+        "mandatory": { "type": "boolean" },
+        "outcome": { "$ref": "#/$defs/gateOutcome" },
+        "observation_status": { "type": "string", "enum": ["FINAL", "PARTIAL", "NOT_EVALUATED"] },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidenceId" },
+          "uniqueItems": true
+        },
+        "observation": { "$ref": "#/$defs/nonBlankString" }
+      },
+      "additionalProperties": false,
+      "description": "A non-authoritative execution observation. It is not a transition-verifier result."
+    },
+    "comparisonObservation": {
+      "type": "object",
+      "required": ["metric", "baseline_evidence", "relation", "description"],
+      "properties": {
+        "metric": { "$ref": "#/$defs/nonBlankString" },
+        "baseline_evidence": { "$ref": "#/$defs/evidenceId" },
+        "relation": { "type": "string", "enum": ["IMPROVED", "UNCHANGED", "WORSENED", "INCOMPARABLE"] },
+        "description": { "$ref": "#/$defs/nonBlankString" }
+      },
+      "additionalProperties": false
+    },
+    "producedEvidenceRecord": {
+      "type": "object",
+      "required": ["evidence", "evidence_role", "description"],
+      "properties": {
+        "evidence": { "$ref": "#/$defs/captureArtifactReference" },
+        "evidence_role": {
+          "type": "string",
+          "enum": [
+            "SCIENTIFIC_EXECUTION",
+            "NEGATIVE_DIAGNOSTIC",
+            "PARTIAL_EXECUTION",
+            "ADMINISTRATIVE_DIAGNOSTIC",
+            "CAPABILITY_DIAGNOSTIC"
+          ]
+        },
+        "description": { "$ref": "#/$defs/nonBlankString" }
+      },
+      "additionalProperties": false,
+      "description": "Declares why an Evidence object was produced; it does not declare what the Evidence establishes."
+    },
+    "recordedEvidenceRecord": {
+      "type": "object",
+      "required": ["evidence", "recorded_at", "recording_action", "recording_description"],
+      "properties": {
+        "evidence": { "$ref": "#/$defs/captureArtifactReference" },
+        "recorded_at": { "$ref": "#/$defs/timestamp" },
+        "recording_action": { "const": "RECORDED" },
+        "recording_description": { "$ref": "#/$defs/nonBlankString" }
+      },
+      "additionalProperties": false,
+      "description": "A structural receipt assertion that named Evidence was recorded. Authentic canonical recording remains a future transition-verifier check."
+    },
+    "versionTransition": {
+      "type": "object",
+      "required": ["prior_object", "replacement_object", "relationship"],
+      "properties": {
+        "prior_object": { "$ref": "#/$defs/canonicalObjectReference" },
+        "replacement_object": { "$ref": "#/$defs/canonicalObjectReference" },
+        "relationship": {
+          "type": "string",
+          "enum": ["NARROWER_SCOPE", "BROADER_SCOPE", "STRENGTHENED_SUPPORT", "SUPERSEDES_CLAIM", "SUPERSEDES_ASSUMPTION"]
+        }
+      },
+      "additionalProperties": false,
+      "description": "Explicit before/after roles for one stable object ID. The replacement is the post-state effect target; the prior object is not a second effect. Historical identity and hash truth are future transition-verifier checks."
+    },
+    "branchLifecycleChange": {
+      "type": "object",
+      "required": ["previous_state", "next_state"],
+      "properties": {
+        "previous_state": {
+          "oneOf": [
+            { "$ref": "#/$defs/branchLifecycle" },
+            { "type": "null" }
+          ]
+        },
+        "next_state": { "$ref": "#/$defs/branchLifecycle" }
+      },
+      "additionalProperties": false,
+      "description": "Authoritative structural declaration of the requested Branch container lifecycle step. Historical prior-state truth is checked by the future transition verifier."
+    },
+    "transitionEffect": {
+      "type": "object",
+      "required": ["action", "object", "effect_description", "effect_hash"],
+      "properties": {
+        "action": { "$ref": "#/$defs/transitionEffectAction" },
+        "object": { "$ref": "#/$defs/canonicalObjectReference" },
+        "effect_description": { "$ref": "#/$defs/nonBlankString" },
+        "effect_hash": { "$ref": "#/$defs/hash" }
+      },
+      "allOf": [
+        { "if": { "properties": { "object": { "properties": { "object_type": { "const": "Evidence" } }, "required": ["object_type"] } }, "required": ["object"] }, "then": { "properties": { "action": { "enum": ["CREATE", "RETAIN"] } } } },
+        { "if": { "properties": { "object": { "properties": { "object_type": { "const": "Definition" } }, "required": ["object_type"] } }, "required": ["object"] }, "then": { "properties": { "action": { "enum": ["CREATE", "SUPERSEDE", "RETAIN", "NO_CHANGE"] } } } },
+        { "if": { "properties": { "object": { "properties": { "object_type": { "const": "Assumption" } }, "required": ["object_type"] } }, "required": ["object"] }, "then": { "properties": { "action": { "enum": ["ADOPT", "RETRACT", "RETAIN", "NO_CHANGE"] } } } },
+        { "if": { "properties": { "object": { "properties": { "object_type": { "const": "Claim" } }, "required": ["object_type"] } }, "required": ["object"] }, "then": { "properties": { "action": { "enum": ["CREATE", "COMMIT", "QUARANTINE", "REJECT", "RETRACT", "RETAIN", "NO_CHANGE"] } } } },
+        { "if": { "properties": { "object": { "properties": { "object_type": { "const": "Obligation" } }, "required": ["object_type"] } }, "required": ["object"] }, "then": { "properties": { "action": { "enum": ["CREATE", "CLOSE_SATISFIED", "CLOSE_KILLED", "RETAIN", "NO_CHANGE"] } } } },
+        { "if": { "properties": { "object": { "properties": { "object_type": { "const": "Branch" } }, "required": ["object_type"] } }, "required": ["object"] }, "then": { "properties": { "action": { "enum": ["CREATE", "OPEN", "ACTIVATE", "FREEZE", "MERGE", "ABANDON", "CLOSE", "NO_CHANGE"] } } } },
+        { "if": { "properties": { "object": { "properties": { "object_type": { "enum": ["Experiment", "Result", "Challenge", "Decision", "TransitionProposal", "ResearchReceipt"] } }, "required": ["object_type"] } }, "required": ["object"] }, "then": { "properties": { "action": { "enum": ["CREATE", "RETAIN", "NO_CHANGE"] } } } }
+      ],
+      "additionalProperties": false
+    },
+    "transitionEffectSet": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/transitionEffect" },
+      "description": "Intended post-state actions. One effect per stable object ID is additionally checked by the shared non-authoritative Phase 0 effect-set validator and authoritatively by the future transition verifier."
+    },
+    "commitmentLineageRequirements": {
+      "type": "object",
+      "required": ["parent_transition", "mandatory_transition_gates"],
+      "properties": {
+        "parent_transition": { "$ref": "#/$defs/transitionProposalId" },
+        "mandatory_transition_gates": { "$ref": "#/$defs/satisfiedMandatoryGateSummary" },
+        "supporting_decisions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/decisionId" },
+          "uniqueItems": true
+        },
+        "supporting_receipts": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/researchReceiptId" },
+          "uniqueItems": true
+        }
+      },
+      "anyOf": [
+        { "properties": { "supporting_decisions": { "minItems": 1 } }, "required": ["supporting_decisions"] },
+        { "properties": { "supporting_receipts": { "minItems": 1 } }, "required": ["supporting_receipts"] }
+      ]
+    }
+  }
+}

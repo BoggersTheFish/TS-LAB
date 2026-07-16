@@ -1,0 +1,68 @@
+# Intentionally omits the parent hash, replay instructions, and receipt hash.
+id: receipt:invalid.unreplayable
+schema_version: "0.1.0"
+parent_receipt_hash: null
+proposed_transition_hash: sha256:2222222222222222222222222222222222222222222222222222222222222222
+source_object_hashes:
+  - sha256:3333333333333333333333333333333333333333333333333333333333333333
+recorded_evidence: []
+challenge_hashes: []
+verifier_results:
+  - obligation_id: transition-gates:invalid-unreplayable
+    verifier: &verifier
+      id: verifier:invalid-fixture
+      role: TRANSITION_VERIFIER
+      version: fixture-0.1
+      ruleset_hash: sha256:4444444444444444444444444444444444444444444444444444444444444444
+    mandatory: true
+    outcome: FAIL
+    evidence: []
+    explanation: No replay contract was supplied.
+    result_hash: sha256:5555555555555555555555555555555555555555555555555555555555555555
+mandatory_gate_summary:
+  all_satisfied: false
+  results:
+    - gate_id: gate:invalid-replay
+      mandatory: true
+      outcome: FAIL
+      verifier: *verifier
+      evidence: []
+      explanation: Replay information is missing.
+decision:
+  decision_id: decision:invalid.unreplayable
+  verdict: NO_CANONICAL_CHANGE
+  rationale: The invalid fixture makes no canonical change.
+human_approval_record: null
+post_state_hash: null
+tools_used: []
+workers:
+  - worker_id: worker:invalid-fixture
+    role: SYSTEM
+    version: fixture-0.1
+    implementation_hash: sha256:7777777777777777777777777777777777777777777777777777777777777777
+    responsibilities:
+      - RECEIPT_RECORDING
+environment_fingerprint: sha256:6666666666666666666666666666666666666666666666666666666666666666
+replay_result:
+  outcome: NOT_RUN
+  replayed_at: null
+  observed_post_state_hash: null
+  details: Replay cannot run because its required contract is absent.
+execution_completed: false
+evidence_recorded: false
+verifier_obligation_satisfied: false
+transition_authorized: false
+canonical_state_committed: false
+producer:
+  id: worker:invalid-fixture
+  role: SYSTEM
+  version: fixture-0.1
+  implementation_hash: sha256:7777777777777777777777777777777777777777777777777777777777777777
+provenance:
+  method: Invalid unreplayable receipt fixture.
+  sources:
+    - source_uri: fixture://invalid/unreplayable
+      source_type: USER_INPUT
+      relation: specifies
+created_at: "2026-01-01T00:00:00Z"
+extensions: {}

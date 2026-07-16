@@ -1,0 +1,20 @@
+# Intentionally invalid only because provenance is absent.
+id: evidence:invalid.missing-provenance
+schema_version: "0.1.0"
+evidence_kind: FIXTURE
+evidence_classification: EXTERNAL_DOCUMENTARY
+source_uri: fixture://invalid/missing-provenance
+content_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+producer:
+  id: source:invalid-fixture
+  role: EXTERNAL_SOURCE
+  version: fixture-0.1
+inputs: []
+environment: null
+source_commit: null
+deterministic_seed: 1
+created_at: "2026-01-01T00:00:00Z"
+evidence_origin: EXTERNAL
+immutable_once_canonically_referenced: true
+canonical_hash: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+extensions: {}

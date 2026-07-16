@@ -1,0 +1,77 @@
+id: obligation:dec24c.fixture.explain-obstruction
+schema_version: "0.1.0"
+precise_question: Which bounded mechanism in the declared fixture method prevents exact gauge nullity or leaves leakage above the required gate?
+finite_scope:
+  domain: DEC24-C obstruction analysis fixture
+  boundaries:
+    - Inspect only the retained reference-run artifacts and declared method.
+    - Produce one finite obstruction analysis.
+  exclusions:
+    - New claims of full emergence.
+    - Unbounded parameter search.
+blocked_claims:
+  - claim:dec24c.full-emergence
+input_claims:
+  - claim:dec24c.fixture.obstruction-persists
+  - claim:dec24c.full-emergence
+input_evidence:
+  - evidence:dec24c.fixture.leakage-observation
+allowed_methods:
+  - Inspect the retained abstract gate outcomes and declared method dependencies.
+  - Form one falsifiable obstruction hypothesis for later verification.
+forbidden_methods:
+  - Invent measurements not present in the source artifacts.
+  - Promote the target Claim from metric improvement alone.
+success_gates:
+  - id: gate:obstruction-explanation-inspectable
+    criterion: A finite obstruction candidate is linked to retained Evidence and a later falsification method.
+    evaluation_method: Human and verifier inspection of the required analysis artifact.
+    pass_condition: One bounded candidate and one concrete falsification method are present.
+    mandatory: true
+kill_gates:
+  - id: gate:no-inspectable-obstruction
+    criterion: No inspectable obstruction candidate can be formed from the allowed inputs.
+    evaluation_method: Review the analysis artifact at the resource limit.
+    pass_condition: The artifact explicitly records that the allowed evidence is insufficient.
+    mandatory: true
+resource_budget:
+  wall_time_seconds: 3600
+  cpu_seconds: 1800
+  memory_bytes: 1073741824
+  storage_bytes: 104857600
+  network_requests: 0
+required_outputs:
+  - output_type: obstruction-analysis
+    description: A bounded analysis linking one candidate obstruction to the failed gate Evidence.
+    inspection_method: Validate its declared inputs, finite conclusion, and falsification method.
+priority_inputs:
+  - object_type: Evidence
+    id: evidence:dec24c.fixture.leakage-observation
+    canonical_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+transaction_state: CANDIDATE
+supporting_decisions: []
+supporting_receipts: []
+dependency_requirements:
+  - The retained gate-outcome Evidence remains addressable and immutable.
+  - The full-emergence Claim remains uncommitted during this Obligation.
+stop_conditions:
+  - condition: A bounded obstruction candidate and falsification method pass inspection.
+    trigger: The success gate passes.
+    resulting_action: STOP_SATISFIED
+  - condition: The budget expires without an inspectable candidate.
+    trigger: Any declared resource limit is reached.
+    resulting_action: STOP_BUDGET_EXHAUSTED
+provenance:
+  method: Opened from the failed mandatory emergence gate in the DEC24-C fixture.
+  sources:
+    - source_uri: fixture://dec24c/claim/obstruction-persists
+      source_type: DERIVATION
+      relation: follows_from
+      content_hash: sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+producer:
+  id: investigator:phase0-fixture
+  role: INVESTIGATOR
+  version: fixture-0.1
+created_at: "2026-01-01T00:06:00Z"
+canonical_hash: sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+extensions: {}

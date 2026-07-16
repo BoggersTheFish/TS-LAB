@@ -1,0 +1,125 @@
+id: receipt:dec24c.fixture.transition
+schema_version: "0.1.0"
+parent_receipt_hash: null
+parent_canonical_state_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
+proposed_transition_hash: sha256:2222222222222222222222222222222222222222222222222222222222222222
+source_object_hashes:
+  - sha256:4444444444444444444444444444444444444444444444444444444444444444
+  - sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+  - sha256:1616161616161616161616161616161616161616161616161616161616161616
+  - sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+  - sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+recorded_evidence:
+  - evidence:
+      object_type: Evidence
+      id: evidence:dec24c.fixture.leakage-observation
+      canonical_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    recorded_at: "2026-01-01T00:03:00Z"
+    recording_action: RECORDED
+    recording_description: The failed-gate observation Evidence was recorded as a retained canonical transition input.
+challenge_hashes:
+  - sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+verifier_results:
+  - obligation_id: transition-gates:dec24c-negative-diagnostic
+    verifier: &verifier
+      id: verifier:phase0-contract-fixture
+      role: TRANSITION_VERIFIER
+      version: fixture-0.1
+      ruleset_hash: sha256:6666666666666666666666666666666666666666666666666666666666666666
+    mandatory: true
+    outcome: PASS
+    evidence:
+      - evidence:dec24c.fixture.leakage-observation
+    explanation: The scoped negative diagnostic, target rejection, Evidence retention, and bounded Obligation satisfy the transition rules.
+    result_hash: sha256:1212121212121212121212121212121212121212121212121212121212121212
+mandatory_gate_summary:
+  all_satisfied: true
+  results:
+    - gate_id: gate:negative-diagnostic-classification
+      mandatory: true
+      outcome: PASS
+      verifier: *verifier
+      evidence:
+        - evidence:dec24c.fixture.leakage-observation
+      explanation: The failure is classified as retained negative knowledge.
+    - gate_id: gate:no-target-promotion
+      mandatory: true
+      outcome: PASS
+      verifier: *verifier
+      evidence:
+        - evidence:dec24c.fixture.leakage-observation
+      explanation: The target hypothesis is not promoted.
+decision:
+  decision_id: decision:dec24c.fixture.commit-negative-diagnostic
+  verdict: APPROVE
+  rationale: Commit only the negative diagnostic, retain failed-gate Evidence, reject target promotion, and open the bounded Obligation.
+human_approval_record:
+  governance_record_id: governance:dec24c.fixture.approval
+  approver:
+    id: human:phase0-governor
+    role: HUMAN_GOVERNOR
+    version: fixture-0.1
+  action: APPROVE
+  approved_at: "2026-01-01T00:07:00Z"
+  policy_id: human_governance
+  approval_hash: sha256:5555555555555555555555555555555555555555555555555555555555555555
+  limitations:
+    - Approval is limited to the negative diagnostic and bounded Obligation.
+post_state_hash: sha256:3333333333333333333333333333333333333333333333333333333333333333
+tools_used:
+  - tool_id: tool:fixture-schema-validator
+    version: "0.1"
+    implementation_hash: sha256:1313131313131313131313131313131313131313131313131313131313131313
+workers:
+  - worker_id: worker:phase0-receipt-recorder
+    role: SYSTEM
+    version: fixture-0.1
+    implementation_hash: sha256:2525252525252525252525252525252525252525252525252525252525252525
+    responsibilities:
+      - RECEIPT_RECORDING
+  - worker_id: worker:phase0-replay-runner
+    role: SYSTEM
+    version: fixture-0.1
+    implementation_hash: sha256:2626262626262626262626262626262626262626262626262626262626262626
+    responsibilities:
+      - REPLAY_EXECUTION
+environment_fingerprint: sha256:7777777777777777777777777777777777777777777777777777777777777777
+replay_instructions:
+  deterministic: true
+  procedure:
+    - Load the parent canonical state identified by the parent hash.
+    - Validate all recorded hashes and mandatory gate outcomes.
+    - Apply exactly the authorized effects and compare the post-state hash.
+  required_artifacts:
+    - sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    - sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  expected_parent_state_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
+replay_result:
+  outcome: PASSED
+  replayed_at: "2026-01-01T00:08:00Z"
+  observed_post_state_hash: sha256:3333333333333333333333333333333333333333333333333333333333333333
+  details: The abstract fixture effects reproduced the declared post-state hash.
+execution_completed: true
+evidence_recorded: true
+verifier_obligation_satisfied: true
+transition_authorized: true
+canonical_state_committed: true
+deterministic_receipt_hash: sha256:1414141414141414141414141414141414141414141414141414141414141414
+producer:
+  id: worker:phase0-receipt-recorder
+  role: SYSTEM
+  version: fixture-0.1
+  implementation_hash: sha256:2525252525252525252525252525252525252525252525252525252525252525
+provenance:
+  method: Recorded from the approved abstract DEC24-C transition fixture.
+  sources:
+    - source_uri: fixture://dec24c/transition/negative-diagnostic
+      source_type: TRANSITION
+      relation: receipts
+      content_hash: sha256:2222222222222222222222222222222222222222222222222222222222222222
+    - source_uri: fixture://dec24c/governance/approval
+      source_type: USER_INPUT
+      relation: human_approval
+      content_hash: sha256:5555555555555555555555555555555555555555555555555555555555555555
+created_at: "2026-01-01T00:07:30Z"
+extensions: {}

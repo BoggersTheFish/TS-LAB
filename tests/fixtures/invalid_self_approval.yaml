@@ -1,0 +1,71 @@
+# Schema-valid local record intentionally rejected by the Phase 0 identity helper.
+id: transition:invalid.self-approval
+schema_version: "0.1.0"
+transition_type: COMMIT_CLAIM
+parent_canonical_state_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
+parent_transition: null
+objects_affected:
+  - object_type: Claim
+    id: claim:invalid.self-approved-target
+    canonical_hash: sha256:2222222222222222222222222222222222222222222222222222222222222222
+evidence_considered:
+  - evidence:invalid.self-approval-input
+new_supporting_evidence: []
+challenges_considered:
+  - challenge:invalid.self-approval-review
+mandatory_gate_results:
+  - gate_id: gate:invalid-self-approval
+    mandatory: true
+    outcome: PASS
+    verifier: &verifier
+      id: verifier:invalid-fixture
+      role: TRANSITION_VERIFIER
+      version: fixture-0.1
+      ruleset_hash: sha256:3333333333333333333333333333333333333333333333333333333333333333
+    evidence:
+      - evidence:invalid.self-approval-input
+    explanation: The schema-valid fixture is rejected by the identity-separation invariant.
+verifier: *verifier
+proposed_post_state_effects:
+  - action: COMMIT
+    object:
+      object_type: Claim
+      id: claim:invalid.self-approved-target
+      canonical_hash: sha256:2222222222222222222222222222222222222222222222222222222222222222
+    effect_description: Attempt to commit the target.
+    effect_hash: sha256:4444444444444444444444444444444444444444444444444444444444444444
+scope_change_classification: SAME_SCOPE
+version_transition: null
+branch_lifecycle_change: null
+replay_information:
+  deterministic: true
+  procedure:
+    - Re-evaluate the isolated fixture proposal.
+  required_artifacts:
+    - sha256:5555555555555555555555555555555555555555555555555555555555555555
+  expected_parent_state_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
+human_approval_required: true
+human_approval:
+  governance_record_id: governance:invalid.self-approval
+  approver:
+    id: human:invalid-self-approver
+    role: HUMAN_GOVERNOR
+    version: fixture-0.1
+  action: APPROVE
+  approved_at: "2026-01-01T00:01:00Z"
+  policy_id: human_governance
+  approval_hash: sha256:6666666666666666666666666666666666666666666666666666666666666666
+authority_basis: VERIFIER_AND_HUMAN_APPROVAL
+producer:
+  id: human:invalid-self-approver
+  role: INVESTIGATOR
+  version: fixture-0.1
+provenance:
+  method: Invalid self-approval fixture.
+  sources:
+    - source_uri: fixture://invalid/self-approval
+      source_type: USER_INPUT
+      relation: specifies
+created_at: "2026-01-01T00:00:30Z"
+deterministic_proposal_hash: sha256:7777777777777777777777777777777777777777777777777777777777777777
+extensions: {}

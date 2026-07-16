@@ -1,0 +1,40 @@
+id: challenge:dec24c.fixture.failed-emergence-gate
+schema_version: "0.1.0"
+target_claims:
+  - claim:dec24c.full-emergence
+statement: Metric improvement cannot support full emergence because exact gauge nullity was not recovered and leakage did not satisfy the required gate.
+challenge_type: EVIDENCE_GAP
+review_scope:
+  domain: DEC24-C reference interpretation
+  boundaries:
+    - The target Claim and the two mandatory emergence gates.
+  exclusions:
+    - Claims about unrecorded measurements.
+definitions_used: []
+assumptions_challenged: []
+evidence_considered:
+  - evidence:dec24c.fixture.leakage-observation
+disposition: SUSTAINED
+resolution_requirements:
+  - Recover exact gauge nullity under a predeclared verifier.
+  - Satisfy the predeclared leakage threshold.
+  - Submit new Evidence through a new TransitionProposal.
+supersedes: null
+producer:
+  id: reviewer:phase0-hostile-review
+  role: REVIEWER
+  version: fixture-0.1
+provenance:
+  method: Hostile review of the non-authoritative Result and retained Evidence against mandatory gates.
+  sources:
+    - source_uri: fixture://dec24c/result/reference-run
+      source_type: RESULT
+      relation: reviews_observations_from
+      content_hash: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    - source_uri: fixture://dec24c/evidence/leakage-observation
+      source_type: EVIDENCE
+      relation: reviewed
+      content_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+created_at: "2026-01-01T00:03:00Z"
+canonical_hash: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+extensions: {}

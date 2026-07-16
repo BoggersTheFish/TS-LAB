@@ -1,0 +1,57 @@
+id: evidence:dec24c.fixture.leakage-observation
+schema_version: "0.1.0"
+evidence_kind: ABSTRACT_GATE_OBSERVATION
+evidence_classification: NEGATIVE_DIAGNOSTIC
+source_uri: fixture://dec24c/result/leakage-observation
+content_hash: sha256:eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+producer:
+  id: runner:phase0-fixture
+  role: EXPERIMENT_RUNNER
+  version: fixture-0.1
+  implementation_hash: sha256:2424242424242424242424242424242424242424242424242424242424242424
+provenance:
+  method: Recorded from the abstract DEC24-C reference execution fixture.
+  sources:
+    - source_uri: fixture://dec24c/result/reference-run
+      source_type: RESULT
+      relation: recorded_from
+      content_hash: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+inputs:
+  - object_type: Experiment
+    id: experiment:dec24c.fixture.reference-run
+    canonical_hash: sha256:4444444444444444444444444444444444444444444444444444444444444444
+environment:
+  operating_system: fixture-os
+  architecture: fixture-architecture
+  runtime_versions:
+    fixture-runtime: "0.1"
+  environment_hash: sha256:7777777777777777777777777777777777777777777777777777777777777777
+source_commit: null
+deterministic_seed: 24
+nondeterminism_declaration: null
+tools_used:
+  - tool_id: tool:fixture-gate-evaluator
+    version: "0.1"
+    implementation_hash: sha256:2121212121212121212121212121212121212121212121212121212121212121
+execution_capture:
+  stdout:
+    capture_status: NOT_PRODUCED
+    artifact: null
+    reason: The fixture evaluator produces structured gate records and no stdout stream.
+  stderr:
+    capture_status: NOT_PRODUCED
+    artifact: null
+    reason: The completed fixture evaluator produced no stderr stream.
+  raw_artifacts:
+    capture_status: NOT_APPLICABLE
+    artifacts: []
+    reason: This Phase 0 record is an abstract schema fixture and intentionally contains no empirical raw artifact.
+  environment_fingerprint: sha256:7777777777777777777777777777777777777777777777777777777777777777
+created_at: "2026-01-01T00:00:00Z"
+evidence_origin: RAW
+immutable_once_canonically_referenced: true
+canonical_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+extensions:
+  org.ts-lab.fixture:
+    empirical_value_present: false
+    purpose: schema-only reference observation

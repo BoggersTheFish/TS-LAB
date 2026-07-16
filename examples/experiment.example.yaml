@@ -1,0 +1,63 @@
+id: experiment:dec24c.fixture.reference-run
+schema_version: "0.1.0"
+obligation: obligation:dec24c.fixture.reference-evaluation
+target_claims:
+  - claim:dec24c.full-emergence
+input_claims:
+  - claim:dec24c.full-emergence
+input_evidence:
+  - evidence:dec24c.fixture.earlier-run
+execution_type: COMPUTATIONAL
+method: Compare an abstract target metric and evaluate the separately declared exact-nullity and leakage gates without supplying fixture measurements.
+allowed_tools:
+  - tool:fixture-gate-evaluator
+environment_requirements:
+  operating_system: fixture-os
+  architecture: fixture-architecture
+  runtime_versions:
+    fixture-runtime: "0.1"
+  environment_hash: sha256:7777777777777777777777777777777777777777777777777777777777777777
+deterministic_seed: 24
+nondeterminism_declaration: null
+resource_budget:
+  wall_time_seconds: 600
+  cpu_seconds: 300
+  memory_bytes: 536870912
+  storage_bytes: 10485760
+  network_requests: 0
+success_gates:
+  - id: gate:exact-gauge-nullity
+    criterion: Exact gauge nullity is recovered under the declared evaluation contract.
+    evaluation_method: Inspect the abstract exact-nullity gate output.
+    pass_condition: The exact-nullity verifier reports PASS.
+    mandatory: true
+  - id: gate:leakage-required-threshold
+    criterion: Leakage satisfies the predeclared required threshold.
+    evaluation_method: Inspect the abstract leakage gate output.
+    pass_condition: The leakage verifier reports PASS.
+    mandatory: true
+kill_gates:
+  - id: gate:emergence-gate-failure
+    criterion: Either mandatory emergence gate does not pass.
+    evaluation_method: Inspect both mandatory gate outcomes.
+    pass_condition: At least one mandatory gate reports FAIL, UNKNOWN, UNSUPPORTED, ERROR, or MISSING.
+    mandatory: true
+required_outputs:
+  - output_type: gate-outcomes
+    description: Separate abstract outcomes for metric comparison, exact nullity, and leakage.
+    inspection_method: Validate that improvement and emergence gates are not conflated.
+execution_outcome: COMPLETED
+producer:
+  id: runner:phase0-fixture
+  role: EXPERIMENT_RUNNER
+  version: fixture-0.1
+provenance:
+  method: Specification-only DEC24-C reference execution.
+  sources:
+    - source_uri: fixture://dec24c/obligation/reference-evaluation
+      source_type: USER_INPUT
+      relation: specified_by
+      content_hash: sha256:9999999999999999999999999999999999999999999999999999999999999999
+created_at: "2026-01-01T00:01:00Z"
+canonical_hash: sha256:4444444444444444444444444444444444444444444444444444444444444444
+extensions: {}

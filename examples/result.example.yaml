@@ -1,0 +1,93 @@
+id: result:dec24c.fixture.reference-run
+schema_version: "0.1.0"
+experiment: experiment:dec24c.fixture.reference-run
+execution_type: COMPUTATIONAL
+execution_outcome: COMPLETED
+outcome_reason: The declared fixture procedure ran to completion; mandatory scientific gates are reported separately.
+engineering_maturity: TESTED
+target_claims:
+  - claim:dec24c.full-emergence
+evidence_produced:
+  - evidence:
+      object_type: Evidence
+      id: evidence:dec24c.fixture.leakage-observation
+      canonical_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    evidence_role: NEGATIVE_DIAGNOSTIC
+    description: Retained observations of the two failed mandatory emergence gates.
+gate_observations:
+  - gate_id: gate:exact-gauge-nullity
+    mandatory: true
+    outcome: FAIL
+    observation_status: FINAL
+    evidence:
+      - evidence:dec24c.fixture.leakage-observation
+    observation: The execution record did not recover exact gauge nullity under the declared fixture gate.
+  - gate_id: gate:leakage-required-threshold
+    mandatory: true
+    outcome: FAIL
+    observation_status: FINAL
+    evidence:
+      - evidence:dec24c.fixture.leakage-observation
+    observation: The execution record left leakage above the declared required gate.
+execution_observations:
+  - The declared experiment completed and produced an inspectable abstract observation artifact.
+  - Both mandatory emergence gates were observed as failed independently of the metric comparison.
+administrative_observations: []
+comparisons:
+  - metric: Declared target metric
+    baseline_evidence: evidence:dec24c.fixture.earlier-run
+    relation: IMPROVED
+    description: The fixture records only that the target metric improved relative to the abstract earlier-run fixture; no value or magnitude is supplied.
+observation_completeness: COMPLETE
+partial_observation_reason: null
+environment:
+  operating_system: fixture-os
+  architecture: fixture-architecture
+  runtime_versions:
+    fixture-runtime: "0.1"
+  environment_hash: sha256:7777777777777777777777777777777777777777777777777777777777777777
+deterministic_seed: 24
+nondeterminism_declaration: null
+tools_used:
+  - tool_id: tool:fixture-gate-evaluator
+    version: "0.1"
+    implementation_hash: sha256:2121212121212121212121212121212121212121212121212121212121212121
+execution_capture:
+  stdout:
+    capture_status: NOT_PRODUCED
+    artifact: null
+    reason: The fixture evaluator produces structured gate records and no stdout stream.
+  stderr:
+    capture_status: NOT_PRODUCED
+    artifact: null
+    reason: The completed fixture evaluator produced no stderr stream.
+  raw_artifacts:
+    capture_status: CAPTURED
+    artifacts:
+      - object_type: Evidence
+        id: evidence:dec24c.fixture.leakage-observation
+        canonical_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    reason: null
+  environment_fingerprint: sha256:7777777777777777777777777777777777777777777777777777777777777777
+timeout_record: null
+unsupported_capability: null
+failure_classification: null
+does_not_establish:
+  - Metric improvement does not establish exact gauge nullity.
+  - Metric improvement does not establish leakage below the required gate.
+  - Completed execution does not establish full emergence.
+producer:
+  id: runner:phase0-fixture
+  role: EXPERIMENT_RUNNER
+  version: fixture-0.1
+  implementation_hash: sha256:2424242424242424242424242424242424242424242424242424242424242424
+provenance:
+  method: Recorded non-authoritative observations from the abstract reference execution.
+  sources:
+    - source_uri: fixture://dec24c/experiment/reference-run
+      source_type: EXPERIMENT
+      relation: generated_by
+      content_hash: sha256:4444444444444444444444444444444444444444444444444444444444444444
+created_at: "2026-01-01T00:02:00Z"
+canonical_hash: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+extensions: {}

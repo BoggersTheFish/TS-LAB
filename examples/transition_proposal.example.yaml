@@ -1,0 +1,131 @@
+id: transition:dec24c.fixture.negative-diagnostic
+schema_version: "0.1.0"
+transition_type: COMMIT_NEGATIVE_DIAGNOSTIC
+parent_canonical_state_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
+parent_transition: null
+objects_affected:
+  - object_type: Claim
+    id: claim:dec24c.fixture.obstruction-persists
+    canonical_hash: sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+  - object_type: Claim
+    id: claim:dec24c.full-emergence
+    canonical_hash: sha256:8888888888888888888888888888888888888888888888888888888888888888
+  - object_type: Obligation
+    id: obligation:dec24c.fixture.explain-obstruction
+    canonical_hash: sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  - object_type: Evidence
+    id: evidence:dec24c.fixture.leakage-observation
+    canonical_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+evidence_considered:
+  - evidence:dec24c.fixture.leakage-observation
+new_supporting_evidence: []
+challenges_considered:
+  - challenge:dec24c.fixture.failed-emergence-gate
+mandatory_gate_results:
+  - gate_id: gate:negative-diagnostic-classification
+    mandatory: true
+    outcome: PASS
+    verifier: &verifier
+      id: verifier:phase0-contract-fixture
+      role: TRANSITION_VERIFIER
+      version: fixture-0.1
+      ruleset_hash: sha256:6666666666666666666666666666666666666666666666666666666666666666
+    evidence:
+      - evidence:dec24c.fixture.leakage-observation
+    explanation: Failed emergence conditions are retained as a scoped negative diagnostic.
+  - gate_id: gate:no-target-promotion
+    mandatory: true
+    outcome: PASS
+    verifier: *verifier
+    evidence:
+      - evidence:dec24c.fixture.leakage-observation
+    explanation: The proposal rejects promotion of the full-emergence target.
+  - gate_id: gate:bounded-follow-up-obligation
+    mandatory: true
+    outcome: PASS
+    verifier: *verifier
+    evidence:
+      - evidence:dec24c.fixture.leakage-observation
+    explanation: The follow-up question has concrete outputs, gates, budget, and stop conditions.
+verifier: *verifier
+proposed_post_state_effects:
+  - action: COMMIT
+    object:
+      object_type: Claim
+      id: claim:dec24c.fixture.obstruction-persists
+      canonical_hash: sha256:dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
+    effect_description: Commit the scoped negative diagnostic.
+    effect_hash: sha256:abababababababababababababababababababababababababababababababab
+  - action: REJECT
+    object:
+      object_type: Claim
+      id: claim:dec24c.full-emergence
+      canonical_hash: sha256:8888888888888888888888888888888888888888888888888888888888888888
+    effect_description: Do not promote the full-emergence interpretation.
+    effect_hash: sha256:bcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbcbc
+  - action: CREATE
+    object:
+      object_type: Obligation
+      id: obligation:dec24c.fixture.explain-obstruction
+      canonical_hash: sha256:ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+    effect_description: Open the bounded obstruction-analysis Obligation.
+    effect_hash: sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd
+  - action: RETAIN
+    object:
+      object_type: Evidence
+      id: evidence:dec24c.fixture.leakage-observation
+      canonical_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    effect_description: Retain the failed-gate Evidence as permanently addressable.
+    effect_hash: sha256:dededededededededededededededededededededededededededededededede
+scope_change_classification: SAME_SCOPE
+version_transition: null
+branch_lifecycle_change: null
+replay_information:
+  deterministic: true
+  procedure:
+    - Load the parent canonical state identified by the parent hash.
+    - Validate source object hashes and all mandatory transition gates.
+    - Apply only the listed effects and compare the resulting state hash.
+  required_artifacts:
+    - sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    - sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+  expected_parent_state_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
+human_approval_required: true
+human_approval: &approval
+  governance_record_id: governance:dec24c.fixture.approval
+  approver:
+    id: human:phase0-governor
+    role: HUMAN_GOVERNOR
+    version: fixture-0.1
+  action: APPROVE
+  approved_at: "2026-01-01T00:07:00Z"
+  policy_id: human_governance
+  approval_hash: sha256:5555555555555555555555555555555555555555555555555555555555555555
+  limitations:
+    - Approval is limited to the negative diagnostic and bounded Obligation.
+authority_basis: VERIFIER_AND_HUMAN_APPROVAL
+producer:
+  id: investigator:phase0-fixture
+  role: INVESTIGATOR
+  version: fixture-0.1
+provenance:
+  method: Proposed after execution, hostile review, and separate transition verification.
+  sources:
+    - source_uri: fixture://dec24c/evidence/leakage-observation
+      source_type: EVIDENCE
+      relation: considered
+      content_hash: sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+    - source_uri: fixture://dec24c/challenge/failed-emergence-gate
+      source_type: DOCUMENT
+      relation: challenge_review
+      content_hash: sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+created_at: "2026-01-01T00:06:30Z"
+deterministic_proposal_hash: sha256:2222222222222222222222222222222222222222222222222222222222222222
+extensions:
+  fixture.external_references:
+    fixture_only: true
+    nodes:
+      - id: claim:dec24c.full-emergence
+        role: pre_existing_external_node
+      - id: obligation:dec24c.fixture.reference-evaluation
+        role: pre_existing_external_node

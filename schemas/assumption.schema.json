@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/assumption.schema.json",
+  "title": "Assumption",
+  "description": "An explicit scoped premise. COMMITTED means adopted for a named Branch or programme, never established as true.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "statement",
+    "scope",
+    "applicability",
+    "rationale",
+    "falsification_or_discharge_condition",
+    "does_not_establish",
+    "definitions_used",
+    "depends_on",
+    "used_by",
+    "supporting_decisions",
+    "supporting_receipts",
+    "transaction_state",
+    "producer",
+    "provenance",
+    "created_at",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/assumptionId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "statement": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "scope": { "$ref": "common.schema.json#/$defs/scope" },
+    "applicability": {
+      "type": "object",
+      "oneOf": [
+        {
+          "required": ["branch"],
+          "properties": { "branch": { "$ref": "common.schema.json#/$defs/branchId" } },
+          "additionalProperties": false
+        },
+        {
+          "required": ["programme"],
+          "properties": { "programme": { "$ref": "common.schema.json#/$defs/nonBlankString" } },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "rationale": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "falsification_or_discharge_condition": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "does_not_establish": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+      "uniqueItems": true
+    },
+    "definitions_used": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/definitionId" },
+      "uniqueItems": true
+    },
+    "depends_on": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/assumptionId" },
+      "uniqueItems": true
+    },
+    "used_by": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/claimId" },
+      "uniqueItems": true
+    },
+    "supporting_decisions": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/decisionId" },
+      "uniqueItems": true
+    },
+    "supporting_receipts": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/researchReceiptId" },
+      "uniqueItems": true
+    },
+    "parent_transition": { "$ref": "common.schema.json#/$defs/transitionProposalId" },
+    "mandatory_transition_gates": { "$ref": "common.schema.json#/$defs/satisfiedMandatoryGateSummary" },
+    "approving_human_governance_record": { "$ref": "common.schema.json#/$defs/humanApproval" },
+    "transaction_state": { "$ref": "common.schema.json#/$defs/transactionState" },
+    "producer": { "$ref": "common.schema.json#/$defs/identity" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "transaction_state": { "const": "COMMITTED" } }, "required": ["transaction_state"] },
+      "then": {
+        "allOf": [
+          { "$ref": "common.schema.json#/$defs/commitmentLineageRequirements" },
+          {
+            "required": ["approving_human_governance_record"],
+            "properties": {
+              "used_by": { "minItems": 1 },
+              "supporting_decisions": { "minItems": 1 },
+              "supporting_receipts": { "minItems": 1 },
+              "approving_human_governance_record": { "$ref": "common.schema.json#/$defs/approvingHumanApproval" }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

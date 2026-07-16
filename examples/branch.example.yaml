@@ -1,0 +1,38 @@
+id: branch:fixture.dec24c-review
+schema_version: "0.1.0"
+parent_canonical_state_hash: sha256:1111111111111111111111111111111111111111111111111111111111111111
+parent_branch: null
+purpose: Isolate the abstract DEC24-C execution and hostile review without permitting canonical writes.
+base_objects:
+  - object_type: Evidence
+    id: evidence:dec24c.fixture.earlier-run
+    canonical_hash: sha256:2020202020202020202020202020202020202020202020202020202020202020
+contained_objects:
+  - object_type: Experiment
+    id: experiment:dec24c.fixture.reference-run
+    canonical_hash: sha256:4444444444444444444444444444444444444444444444444444444444444444
+  - object_type: Result
+    id: result:dec24c.fixture.reference-run
+    canonical_hash: sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+isolation_guarantees:
+  canonical_writes_allowed: false
+  network_default: DENY
+  resource_budget_required: true
+branch_lifecycle: PROPOSED
+supporting_decisions: []
+supporting_receipts: []
+closure_decision: null
+merge_does_not_commit_contents: true
+producer:
+  id: investigator:phase0-fixture
+  role: INVESTIGATOR
+  version: fixture-0.1
+provenance:
+  method: Declared as a Phase 0 Branch fixture; no workspace or runtime is created.
+  sources:
+    - source_uri: fixture://dec24c/branch/review
+      source_type: USER_INPUT
+      relation: specified_by
+created_at: "2026-01-01T00:00:20Z"
+canonical_hash: sha256:2323232323232323232323232323232323232323232323232323232323232323
+extensions: {}

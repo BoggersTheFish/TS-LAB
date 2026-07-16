@@ -1,0 +1,26 @@
+id: definition:fixture.canonical-adoption
+schema_version: "0.1.0"
+term: Canonical adoption
+meaning: Inclusion as an explicit premise or research-state object through an authorized transition, without implying scientific truth.
+scope:
+  domain: TS-LAB Phase 0 contracts
+  boundaries:
+    - Applies only to the frozen v0.1 object and transition vocabulary.
+  exclusions:
+    - Empirical verification.
+depends_on: []
+replaces: null
+producer:
+  id: investigator:phase0-fixture
+  role: INVESTIGATOR
+  version: fixture-0.1
+provenance:
+  method: Defined for the Phase 0 schema fixture.
+  sources:
+    - source_uri: fixture://definitions/canonical-adoption
+      source_type: USER_INPUT
+      relation: specified_by
+created_at: "2026-01-01T00:00:00Z"
+canonical_hash: sha256:1717171717171717171717171717171717171717171717171717171717171717
+extensions: {}
+

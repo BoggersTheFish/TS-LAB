@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/experiment.schema.json",
+  "title": "Experiment Specification",
+  "description": "An Experiment specifies execution and records engineering completion only; it cannot approve or scientifically interpret itself.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "obligation",
+    "target_claims",
+    "input_claims",
+    "input_evidence",
+    "execution_type",
+    "method",
+    "allowed_tools",
+    "environment_requirements",
+    "deterministic_seed",
+    "nondeterminism_declaration",
+    "resource_budget",
+    "success_gates",
+    "kill_gates",
+    "required_outputs",
+    "execution_outcome",
+    "producer",
+    "provenance",
+    "created_at",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/experimentId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "obligation": { "$ref": "common.schema.json#/$defs/obligationId" },
+    "target_claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/claimId" },
+      "uniqueItems": true
+    },
+    "input_claims": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/claimId" },
+      "uniqueItems": true
+    },
+    "input_evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/evidenceId" },
+      "uniqueItems": true
+    },
+    "execution_type": { "$ref": "common.schema.json#/$defs/executionType" },
+    "method": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "allowed_tools": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^tool:[a-zA-Z0-9][a-zA-Z0-9._-]*$" },
+      "uniqueItems": true
+    },
+    "environment_requirements": { "$ref": "common.schema.json#/$defs/environment" },
+    "deterministic_seed": { "type": ["integer", "null"] },
+    "nondeterminism_declaration": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/nonBlankString" },
+        { "type": "null" }
+      ]
+    },
+    "resource_budget": { "$ref": "common.schema.json#/$defs/resourceBudget" },
+    "success_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/gateDefinition" }
+    },
+    "kill_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/gateDefinition" }
+    },
+    "required_outputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/requiredOutput" }
+    },
+    "execution_outcome": { "$ref": "common.schema.json#/$defs/executionOutcome" },
+    "producer": { "$ref": "common.schema.json#/$defs/identity" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "deterministic_seed": { "type": "null" } }, "required": ["deterministic_seed"] },
+      "then": { "properties": { "nondeterminism_declaration": { "$ref": "common.schema.json#/$defs/nonBlankString" } } }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,37 @@
+id: assumption:fixture.abstract-comparison-premise
+schema_version: "0.1.0"
+statement: The fixture labels its comparison relation without asserting an unrecorded numerical magnitude.
+scope:
+  domain: DEC24-C schema reference case
+  boundaries:
+    - Applies only to qualitative fixture comparison records.
+  exclusions:
+    - Empirical magnitude.
+    - General physical interpretation.
+applicability:
+  programme: TS-LAB Phase 0 schema fixtures
+rationale: A schema fixture needs a comparison relation while remaining honest about absent measurements.
+falsification_or_discharge_condition: Revise or discharge the premise if source artifacts with an auditable measurement replace the abstract fixture.
+does_not_establish:
+  - It does not establish that any empirical metric changed by a measured amount.
+  - It does not establish the target emergence interpretation.
+definitions_used:
+  - definition:fixture.canonical-adoption
+depends_on: []
+used_by: []
+supporting_decisions: []
+supporting_receipts: []
+transaction_state: CANDIDATE
+producer:
+  id: investigator:phase0-fixture
+  role: INVESTIGATOR
+  version: fixture-0.1
+provenance:
+  method: Declared as an explicit fixture premise rather than Evidence.
+  sources:
+    - source_uri: fixture://dec24c/assumption/abstract-comparison
+      source_type: USER_INPUT
+      relation: specified_by
+created_at: "2026-01-01T00:00:05Z"
+canonical_hash: sha256:1818181818181818181818181818181818181818181818181818181818181818
+extensions: {}

@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/obligation.schema.json",
+  "title": "Research Obligation",
+  "description": "One finite, testable, budgeted and stoppable unit of future work. A COMMITTED Obligation requires transition lineage.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "precise_question",
+    "finite_scope",
+    "blocked_claims",
+    "input_claims",
+    "input_evidence",
+    "allowed_methods",
+    "forbidden_methods",
+    "success_gates",
+    "kill_gates",
+    "resource_budget",
+    "required_outputs",
+    "priority_inputs",
+    "transaction_state",
+    "supporting_decisions",
+    "supporting_receipts",
+    "dependency_requirements",
+    "stop_conditions",
+    "provenance",
+    "producer",
+    "created_at",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/obligationId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "precise_question": {
+      "allOf": [
+        { "$ref": "common.schema.json#/$defs/nonBlankString" },
+        { "minLength": 12, "not": { "pattern": "^(develop TS|solve gravity|work on the TOE|improve the theory|investigate everything)[.!]?$" } }
+      ]
+    },
+    "finite_scope": { "$ref": "common.schema.json#/$defs/scope" },
+    "blocked_claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/claimId" },
+      "uniqueItems": true
+    },
+    "input_claims": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/claimId" },
+      "uniqueItems": true
+    },
+    "input_evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/evidenceId" },
+      "uniqueItems": true
+    },
+    "allowed_methods": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+      "uniqueItems": true
+    },
+    "forbidden_methods": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+      "uniqueItems": true
+    },
+    "success_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/gateDefinition" }
+    },
+    "kill_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/gateDefinition" }
+    },
+    "resource_budget": { "$ref": "common.schema.json#/$defs/resourceBudget" },
+    "required_outputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/requiredOutput" }
+    },
+    "priority_inputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/canonicalObjectReference" }
+    },
+    "transaction_state": { "$ref": "common.schema.json#/$defs/transactionState" },
+    "supporting_decisions": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/decisionId" },
+      "uniqueItems": true
+    },
+    "supporting_receipts": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/researchReceiptId" },
+      "uniqueItems": true
+    },
+    "parent_transition": { "$ref": "common.schema.json#/$defs/transitionProposalId" },
+    "mandatory_transition_gates": { "$ref": "common.schema.json#/$defs/satisfiedMandatoryGateSummary" },
+    "dependency_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+      "uniqueItems": true
+    },
+    "stop_conditions": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/stopCondition" }
+    },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "producer": { "$ref": "common.schema.json#/$defs/identity" },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "transaction_state": { "const": "COMMITTED" } }, "required": ["transaction_state"] },
+      "then": { "$ref": "common.schema.json#/$defs/commitmentLineageRequirements" }
+    }
+  ],
+  "additionalProperties": false
+}

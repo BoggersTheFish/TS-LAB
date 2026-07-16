@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/claim.schema.json",
+  "title": "Claim",
+  "description": "A scoped scientific interpretation. Commitment requires explicit lineage and passing local gate records; cross-record truth is a future-verifier responsibility.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "statement",
+    "scope",
+    "epistemic_class",
+    "transaction_state",
+    "engineering_maturity",
+    "definitions_used",
+    "assumptions_used",
+    "depends_on",
+    "supported_by",
+    "contradicted_by",
+    "open_obligations",
+    "challenges",
+    "supporting_decisions",
+    "supporting_receipts",
+    "does_not_establish",
+    "provenance",
+    "producer",
+    "created_at",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/claimId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "statement": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "scope": { "$ref": "common.schema.json#/$defs/scope" },
+    "epistemic_class": { "$ref": "common.schema.json#/$defs/epistemicClass" },
+    "transaction_state": { "$ref": "common.schema.json#/$defs/transactionState" },
+    "engineering_maturity": { "$ref": "common.schema.json#/$defs/engineeringMaturity" },
+    "definitions_used": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/definitionId" },
+      "uniqueItems": true
+    },
+    "assumptions_used": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/assumptionId" },
+      "uniqueItems": true
+    },
+    "depends_on": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/claimId" },
+      "uniqueItems": true
+    },
+    "supported_by": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/evidenceId" },
+      "uniqueItems": true
+    },
+    "contradicted_by": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/evidenceId" },
+      "uniqueItems": true
+    },
+    "open_obligations": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/obligationId" },
+      "uniqueItems": true
+    },
+    "challenges": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/challengeId" },
+      "uniqueItems": true
+    },
+    "supporting_decisions": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/decisionId" },
+      "uniqueItems": true
+    },
+    "supporting_receipts": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/researchReceiptId" },
+      "uniqueItems": true
+    },
+    "does_not_establish": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+      "uniqueItems": true
+    },
+    "no_scope_exclusions_reason": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "limitation_exception_policy_approval": { "$ref": "common.schema.json#/$defs/policyApproval" },
+    "approving_human_governance_record": { "$ref": "common.schema.json#/$defs/humanApproval" },
+    "parent_transition": { "$ref": "common.schema.json#/$defs/transitionProposalId" },
+    "mandatory_transition_gates": { "$ref": "common.schema.json#/$defs/satisfiedMandatoryGateSummary" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "producer": { "$ref": "common.schema.json#/$defs/identity" },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "transaction_state": { "const": "COMMITTED" } }, "required": ["transaction_state"] },
+      "then": {
+        "allOf": [
+          { "$ref": "common.schema.json#/$defs/commitmentLineageRequirements" },
+          {
+            "anyOf": [
+              { "properties": { "does_not_establish": { "minItems": 1 } } },
+              {
+                "required": ["no_scope_exclusions_reason", "limitation_exception_policy_approval", "approving_human_governance_record"],
+                "properties": {
+                  "does_not_establish": { "maxItems": 0 },
+                  "approving_human_governance_record": { "$ref": "common.schema.json#/$defs/approvingHumanApproval" }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/constitution.schema.json",
+  "title": "Frozen TS-LAB Phase 0 Constitution",
+  "description": "Normative validation of the four frozen TS-LAB v0.1 policies. This is intentionally not a generic policy-shape schema: every constitutional value and ordered invariant list is exact.",
+  "oneOf": [
+    { "$ref": "#/$defs/authorityPolicy" },
+    { "$ref": "#/$defs/claimPolicy" },
+    { "$ref": "#/$defs/executionPolicy" },
+    { "$ref": "#/$defs/humanGovernancePolicy" }
+  ],
+  "$defs": {
+    "authorityPolicy": {
+      "type": "object",
+      "const": {
+        "schema_version": "0.1.0",
+        "policy_id": "authority",
+        "project": {
+          "name": "TS-LAB",
+          "independent": true,
+          "writable_dependencies": [],
+          "constitutional_precedent": {
+            "project": "BoggersTheAI",
+            "access": "READ_ONLY_REFERENCE",
+            "runtime_dependency": false
+          }
+        },
+        "phase_boundary": {
+          "phase": 0,
+          "canonical_research_mutation_path_exists": false,
+          "tskernel_integration_exists": false
+        },
+        "actors": {
+          "proposer": { "authoritative": false },
+          "investigator": { "authoritative": false },
+          "experiment_runner": { "authoritative": false },
+          "reviewer": { "authoritative": false },
+          "generator": { "authoritative": false },
+          "renderer": { "authoritative": false },
+          "model": { "authoritative": false },
+          "provider": { "authoritative": false }
+        },
+        "future_authorization": {
+          "transition_verifier_required": true,
+          "human_approval_required": true,
+          "verifier_and_human_events_distinct": true,
+          "available_in_phase_0": false
+        },
+        "authority_weights": {
+          "confidence": 0,
+          "eloquence": 0,
+          "model_identity": 0,
+          "provider_identity": 0,
+          "token_volume": 0,
+          "execution_success_alone": 0
+        },
+        "fail_closed": {
+          "unsupported_domain": "REJECT",
+          "unknown_mandatory_result": "REJECT",
+          "missing_mandatory_result": "REJECT",
+          "errored_mandatory_result": "REJECT",
+          "failed_mandatory_result": "REJECT"
+        },
+        "event_separation": {
+          "evidence_is_verification": false,
+          "verification_is_authorization": false,
+          "authorization_is_commitment": false,
+          "execution_completion_is_semantic_proof": false,
+          "generated_explanation_is_authoritative": false
+        },
+        "invariants": [
+          "AUTH-PROPOSERS-NON-AUTHORITATIVE",
+          "AUTH-CONFIDENCE-ZERO",
+          "AUTH-EXECUTION-NOT-PROOF",
+          "AUTH-MANDATORY-GATES-FAIL-CLOSED",
+          "AUTH-EVENTS-SEPARATE",
+          "AUTH-NO-PHASE0-MUTATION"
+        ]
+      }
+    },
+    "claimPolicy": {
+      "type": "object",
+      "const": {
+        "schema_version": "0.1.0",
+        "policy_id": "claim_policy",
+        "scope_discipline": {
+          "classifications": ["SAME_SCOPE", "NARROWER_SCOPE", "BROADER_SCOPE"],
+          "silent_broadening_allowed": false,
+          "broader_scope_requires": [
+            "HUMAN_APPROVAL",
+            "NEW_SUPPORTING_EVIDENCE",
+            "NEW_OR_REVISED_CHALLENGE_REVIEW",
+            "BROADER_DOMAIN_JUSTIFICATION"
+          ]
+        },
+        "committed_claims": {
+          "explicit_nonempty_scope_required": true,
+          "provenance_required": true,
+          "supporting_decision_or_receipt_required": true,
+          "satisfied_mandatory_transition_gates_required": true,
+          "producer_self_approval_allowed": false,
+          "traceable_parent_transition_required": true,
+          "does_not_establish": {
+            "required": true,
+            "minimum_items": 1,
+            "exception": {
+              "allowed": true,
+              "reason_required": true,
+              "policy_approval_required": true,
+              "human_governance_record_required": true
+            }
+          }
+        },
+        "assumptions": {
+          "explicit_tracking_required": true,
+          "implicit_assumption_laundering_allowed": false,
+          "committed_meaning": "SCOPED_PREMISE_ADOPTION_NOT_TRUTH",
+          "committed_may_be_established_by_adoption": false,
+          "assumption_to_claim_conversion_allowed": false,
+          "adoption_transition": "ADOPT_ASSUMPTION",
+          "supersession_transition": "SUPERSEDE_ASSUMPTION",
+          "retraction_transition": "RETRACT_ASSUMPTION",
+          "adoption_requires": [
+            "EXPLICIT_SCOPE",
+            "APPLICABLE_BRANCH_OR_PROGRAMME",
+            "SUPPORTING_DECISION",
+            "SUPPORTING_RESEARCH_RECEIPT",
+            "HUMAN_APPROVAL",
+            "DOES_NOT_ESTABLISH",
+            "DOWNSTREAM_CLAIM_DEPENDENCIES",
+            "REVISION_OR_KILL_CONDITION"
+          ],
+          "history": {
+            "adopted_assumptions_permanently_addressable": true,
+            "supersession_creates_new_version": true,
+            "superseded_assumptions_deleted": false,
+            "retracted_assumptions_deleted": false,
+            "retraction_changes_applicability_not_existence": true,
+            "downstream_historical_dependencies_retained": true
+          }
+        },
+        "branches": {
+          "lifecycle_field": "branch_lifecycle",
+          "transaction_state_allowed": false,
+          "lifecycle_is_epistemic_authority": false,
+          "lifecycle_states": ["PROPOSED", "OPEN", "ACTIVE", "FROZEN", "MERGED", "ABANDONED", "CLOSED"],
+          "lifecycle_graph": {
+            "CREATE_BRANCH": ["ABSENT", "PROPOSED"],
+            "OPEN_BRANCH": ["PROPOSED", "OPEN"],
+            "ACTIVATE_BRANCH": [["OPEN", "ACTIVE"], ["FROZEN", "ACTIVE"]],
+            "FREEZE_BRANCH": ["ACTIVE", "FROZEN"],
+            "MERGE_BRANCH": [["ACTIVE", "MERGED"], ["FROZEN", "MERGED"]],
+            "ABANDON_BRANCH": [["PROPOSED", "ABANDONED"], ["OPEN", "ABANDONED"], ["ACTIVE", "ABANDONED"], ["FROZEN", "ABANDONED"]],
+            "CLOSE_BRANCH": [["MERGED", "CLOSED"], ["ABANDONED", "CLOSED"]]
+          },
+          "transitions_affect_container_only": true,
+          "activation_commits_contained_objects": false,
+          "merge_commits_contained_objects": false,
+          "contained_objects_require_independent_transition": true,
+          "historical_prior_state_verified_by_future_transition_verifier": true
+        },
+        "dependencies": {
+          "typed_links_required": true,
+          "cycles_allowed": false,
+          "missing_dependencies_allowed": false
+        },
+        "retention": {
+          "failed_claims_permanently_addressable": true,
+          "rejected_claims_permanently_addressable": true,
+          "negative_diagnostics_permanently_addressable": true,
+          "adopted_assumptions_permanently_addressable": true,
+          "superseded_assumptions_permanently_addressable": true,
+          "retracted_assumptions_permanently_addressable": true,
+          "contradictory_evidence_removal_allowed": false,
+          "failure_to_absence_conversion_allowed": false
+        },
+        "summaries": {
+          "claim_laundering_allowed": false,
+          "authority_inherited_from_summary": false
+        },
+        "novelty": {
+          "standard_result_renaming_allowed_without_comparison": false,
+          "new_notation_implies_novelty": false
+        },
+        "extensions": {
+          "may_override_canonical_fields": false,
+          "may_affect_authority": false
+        },
+        "invariants": [
+          "CLAIM-SCOPE-EXPLICIT",
+          "CLAIM-NO-SILENT-BROADENING",
+          "CLAIM-LIMITATIONS-REQUIRED",
+          "CLAIM-ASSUMPTIONS-EXPLICIT",
+          "CLAIM-ASSUMPTION-ADOPTION-NOT-TRUTH",
+          "CLAIM-ASSUMPTION-HISTORY-RETAINED",
+          "CLAIM-BRANCH-LIFECYCLE-NON-EPISTEMIC",
+          "CLAIM-FAILURES-RETAINED",
+          "CLAIM-CONTRADICTIONS-RETAINED",
+          "CLAIM-NO-SUMMARY-LAUNDERING",
+          "CLAIM-NO-NOTATION-NOVELTY"
+        ]
+      }
+    },
+    "executionPolicy": {
+      "type": "object",
+      "const": {
+        "schema_version": "0.1.0",
+        "policy_id": "execution_policy",
+        "sandbox": { "required": true, "isolation_required": true },
+        "network": { "default": "DENY", "explicit_allowlist_required": true },
+        "tools": { "default": "DENY", "allowlist_required": true, "allowlisted_tools": [] },
+        "determinism": {
+          "deterministic_seed_required_where_possible": true,
+          "nondeterminism_must_be_declared": true
+        },
+        "environment_capture": {
+          "exact_environment_required": true,
+          "tool_versions_required": true,
+          "worker_versions_required": true,
+          "tool_versions_bound_to_tool_ids": true,
+          "worker_versions_bound_to_worker_ids": true
+        },
+        "resources": {
+          "budget_required": true,
+          "timeout_required": true,
+          "timeout_recording_required": true
+        },
+        "artifacts": {
+          "raw_artifacts_immutable": true,
+          "stdout_capture_record_required": true,
+          "stderr_capture_record_required": true,
+          "produced_stdout_must_be_captured": true,
+          "produced_stderr_must_be_captured": true,
+          "capture_not_applicable_requires_reason": true,
+          "content_hashes_required": true
+        },
+        "result_outcomes": {
+          "COMPLETED": "EXECUTION_FACTS_ALLOWED",
+          "FAILED": "FAILURE_CLASSIFICATION_AND_PARTIAL_OR_NEGATIVE_EVIDENCE",
+          "TIMED_OUT": "TIMEOUT_RECORD_AND_PARTIAL_OR_NEGATIVE_EVIDENCE",
+          "CANCELLED": "FAILURE_CLASSIFICATION_AND_PARTIAL_OR_NEGATIVE_EVIDENCE",
+          "NOT_RUN": "NO_EXECUTION_DERIVED_EVIDENCE",
+          "UNSUPPORTED": "ADMINISTRATIVE_OR_CAPABILITY_DIAGNOSTIC_EVIDENCE_ONLY"
+        },
+        "failures": {
+          "classification_required": true,
+          "retained_as_evidence": true,
+          "may_generate_negative_evidence": true
+        },
+        "authority": {
+          "result_self_interpretation_allowed": false,
+          "result_self_approval_allowed": false,
+          "execution_success_is_verification": false,
+          "execution_failure_precludes_knowledge": false
+        },
+        "invariants": [
+          "EXEC-SANDBOX-REQUIRED",
+          "EXEC-NETWORK-DENY-DEFAULT",
+          "EXEC-BUDGET-AND-TIMEOUT",
+          "EXEC-RAW-ARTIFACTS-IMMUTABLE",
+          "EXEC-OUTPUTS-CAPTURED",
+          "EXEC-NO-SELF-INTERPRETATION",
+          "EXEC-SUCCESS-NOT-VERIFICATION",
+          "EXEC-FAILURE-CAN-BE-EVIDENCE"
+        ]
+      }
+    },
+    "humanGovernancePolicy": {
+      "type": "object",
+      "const": {
+        "schema_version": "0.1.0",
+        "policy_id": "human_governance",
+        "version_scope": "TS-LAB-v0.1",
+        "canonical_transitions": {
+          "human_approval_required": true,
+          "automatic_merge_allowed": false,
+          "background_commit_allowed": false
+        },
+        "human_governor": {
+          "may_approve": true,
+          "may_reject": true,
+          "may_narrow": true,
+          "rejection_overrides_proposal": true
+        },
+        "records": {
+          "rejected_proposals_retained": true,
+          "approval_identity_required": true,
+          "approval_timestamp_required": true,
+          "approval_action_required": true
+        },
+        "automation": {
+          "background_daemon_allowed": false,
+          "autonomous_verifier_replacement_allowed": false,
+          "model_weight_update_may_alter_authority": false
+        },
+        "self_approval": {
+          "worker_may_approve_own_output": false,
+          "verifier_modification_may_approve_itself": false,
+          "proposer_may_approve_own_transition": false,
+          "reviewer_may_approve_own_review": false
+        },
+        "invariants": [
+          "GOV-HUMAN-APPROVAL-ALL-TRANSITIONS",
+          "GOV-NO-AUTOMATIC-MERGE",
+          "GOV-REJECTIONS-RETAINED",
+          "GOV-APPROVAL-AUDITABLE",
+          "GOV-NO-BACKGROUND-DAEMON",
+          "GOV-NO-SELF-APPROVAL",
+          "GOV-NO-SELF-MODIFYING-VERIFIER-AUTHORITY"
+        ]
+      }
+    }
+  }
+}

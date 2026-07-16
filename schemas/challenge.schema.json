@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/challenge.schema.json",
+  "title": "Challenge",
+  "description": "A non-authoritative hostile review artifact whose actual consideration is checked by a future transition verifier.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "target_claims",
+    "statement",
+    "challenge_type",
+    "review_scope",
+    "definitions_used",
+    "assumptions_challenged",
+    "evidence_considered",
+    "disposition",
+    "resolution_requirements",
+    "producer",
+    "provenance",
+    "created_at",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/challengeId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "target_claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/claimId" },
+      "uniqueItems": true
+    },
+    "statement": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "challenge_type": {
+      "type": "string",
+      "enum": [
+        "EVIDENCE_GAP",
+        "CONTRADICTION",
+        "SCOPE",
+        "ASSUMPTION",
+        "METHOD",
+        "REPRODUCIBILITY",
+        "NOVELTY",
+        "AUTHORITY"
+      ]
+    },
+    "review_scope": { "$ref": "common.schema.json#/$defs/scope" },
+    "definitions_used": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/definitionId" },
+      "uniqueItems": true
+    },
+    "assumptions_challenged": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/assumptionId" },
+      "uniqueItems": true
+    },
+    "evidence_considered": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/evidenceId" },
+      "uniqueItems": true
+    },
+    "disposition": { "$ref": "common.schema.json#/$defs/challengeDisposition" },
+    "resolution_requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+      "uniqueItems": true
+    },
+    "supersedes": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/challengeId" },
+        { "type": "null" }
+      ]
+    },
+    "producer": { "$ref": "common.schema.json#/$defs/identity" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "additionalProperties": false
+}

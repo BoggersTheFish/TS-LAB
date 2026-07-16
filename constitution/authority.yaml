@@ -1,0 +1,63 @@
+schema_version: "0.1.0"
+policy_id: authority
+project:
+  name: TS-LAB
+  independent: true
+  writable_dependencies: []
+  constitutional_precedent:
+    project: BoggersTheAI
+    access: READ_ONLY_REFERENCE
+    runtime_dependency: false
+phase_boundary:
+  phase: 0
+  canonical_research_mutation_path_exists: false
+  tskernel_integration_exists: false
+actors:
+  proposer:
+    authoritative: false
+  investigator:
+    authoritative: false
+  experiment_runner:
+    authoritative: false
+  reviewer:
+    authoritative: false
+  generator:
+    authoritative: false
+  renderer:
+    authoritative: false
+  model:
+    authoritative: false
+  provider:
+    authoritative: false
+future_authorization:
+  transition_verifier_required: true
+  human_approval_required: true
+  verifier_and_human_events_distinct: true
+  available_in_phase_0: false
+authority_weights:
+  confidence: 0
+  eloquence: 0
+  model_identity: 0
+  provider_identity: 0
+  token_volume: 0
+  execution_success_alone: 0
+fail_closed:
+  unsupported_domain: REJECT
+  unknown_mandatory_result: REJECT
+  missing_mandatory_result: REJECT
+  errored_mandatory_result: REJECT
+  failed_mandatory_result: REJECT
+event_separation:
+  evidence_is_verification: false
+  verification_is_authorization: false
+  authorization_is_commitment: false
+  execution_completion_is_semantic_proof: false
+  generated_explanation_is_authoritative: false
+invariants:
+  - AUTH-PROPOSERS-NON-AUTHORITATIVE
+  - AUTH-CONFIDENCE-ZERO
+  - AUTH-EXECUTION-NOT-PROOF
+  - AUTH-MANDATORY-GATES-FAIL-CLOSED
+  - AUTH-EVENTS-SEPARATE
+  - AUTH-NO-PHASE0-MUTATION
+

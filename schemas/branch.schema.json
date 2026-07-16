@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/branch.schema.json",
+  "title": "Isolated Research Branch",
+  "description": "A Branch has a container lifecycle, not an epistemic transaction state. Branch activation or merge confers no authority on contained objects.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "parent_canonical_state_hash",
+    "parent_branch",
+    "purpose",
+    "base_objects",
+    "contained_objects",
+    "isolation_guarantees",
+    "branch_lifecycle",
+    "supporting_decisions",
+    "supporting_receipts",
+    "closure_decision",
+    "merge_does_not_commit_contents",
+    "producer",
+    "provenance",
+    "created_at",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/branchId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "parent_canonical_state_hash": { "$ref": "common.schema.json#/$defs/hash" },
+    "parent_branch": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/branchId" },
+        { "type": "null" }
+      ]
+    },
+    "purpose": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "base_objects": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/canonicalObjectReference" },
+      "uniqueItems": true
+    },
+    "contained_objects": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/canonicalObjectReference" },
+      "uniqueItems": true
+    },
+    "isolation_guarantees": {
+      "type": "object",
+      "required": ["canonical_writes_allowed", "network_default", "resource_budget_required"],
+      "properties": {
+        "canonical_writes_allowed": { "const": false },
+        "network_default": { "const": "DENY" },
+        "resource_budget_required": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "branch_lifecycle": { "$ref": "common.schema.json#/$defs/branchLifecycle" },
+    "lifecycle_transition": { "$ref": "common.schema.json#/$defs/transitionProposalId" },
+    "supporting_decisions": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/decisionId" },
+      "uniqueItems": true
+    },
+    "supporting_receipts": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/researchReceiptId" },
+      "uniqueItems": true
+    },
+    "closure_decision": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/decisionId" },
+        { "type": "null" }
+      ]
+    },
+    "merge_does_not_commit_contents": { "const": true },
+    "producer": { "$ref": "common.schema.json#/$defs/identity" },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "branch_lifecycle": { "not": { "const": "PROPOSED" } } }, "required": ["branch_lifecycle"] },
+      "then": {
+        "required": ["lifecycle_transition"],
+        "properties": {
+          "supporting_decisions": { "minItems": 1 },
+          "supporting_receipts": { "minItems": 1 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "branch_lifecycle": { "enum": ["MERGED", "ABANDONED", "CLOSED"] } }, "required": ["branch_lifecycle"] },
+      "then": {
+        "required": ["closure_decision"],
+        "properties": { "closure_decision": { "$ref": "common.schema.json#/$defs/decisionId" } }
+      }
+    },
+    {
+      "if": { "properties": { "branch_lifecycle": { "enum": ["PROPOSED", "OPEN", "ACTIVE", "FROZEN"] } }, "required": ["branch_lifecycle"] },
+      "then": { "properties": { "closure_decision": { "type": "null" } } }
+    }
+  ],
+  "additionalProperties": false
+}

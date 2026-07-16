@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.ts-lab.invalid/0.1/result.schema.json",
+  "title": "Experiment Result",
+  "description": "A non-authoritative observation artifact. A Result records execution and observation facts but has no epistemic class, transaction state, approval, truth, interpretation, or commitment field.",
+  "type": "object",
+  "required": [
+    "id",
+    "schema_version",
+    "experiment",
+    "execution_type",
+    "execution_outcome",
+    "outcome_reason",
+    "engineering_maturity",
+    "target_claims",
+    "evidence_produced",
+    "gate_observations",
+    "execution_observations",
+    "administrative_observations",
+    "comparisons",
+    "observation_completeness",
+    "partial_observation_reason",
+    "environment",
+    "deterministic_seed",
+    "nondeterminism_declaration",
+    "tools_used",
+    "execution_capture",
+    "timeout_record",
+    "unsupported_capability",
+    "failure_classification",
+    "does_not_establish",
+    "producer",
+    "provenance",
+    "created_at",
+    "canonical_hash",
+    "extensions"
+  ],
+  "properties": {
+    "id": { "$ref": "common.schema.json#/$defs/resultId" },
+    "schema_version": { "$ref": "common.schema.json#/$defs/schemaVersion" },
+    "experiment": { "$ref": "common.schema.json#/$defs/experimentId" },
+    "execution_type": { "$ref": "common.schema.json#/$defs/executionType" },
+    "execution_outcome": { "$ref": "common.schema.json#/$defs/executionOutcome" },
+    "outcome_reason": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+    "engineering_maturity": { "$ref": "common.schema.json#/$defs/engineeringMaturity" },
+    "target_claims": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/claimId" },
+      "uniqueItems": true
+    },
+    "evidence_produced": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/producedEvidenceRecord" },
+      "uniqueItems": true
+    },
+    "gate_observations": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/executionGateObservation" }
+    },
+    "execution_observations": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" }
+    },
+    "administrative_observations": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" }
+    },
+    "comparisons": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/comparisonObservation" }
+    },
+    "observation_completeness": { "type": "string", "enum": ["COMPLETE", "PARTIAL", "NONE"] },
+    "partial_observation_reason": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/nonBlankString" },
+        { "type": "null" }
+      ]
+    },
+    "environment": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/environment" },
+        { "type": "null" }
+      ]
+    },
+    "deterministic_seed": { "type": ["integer", "null"] },
+    "nondeterminism_declaration": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/nonBlankString" },
+        { "type": "null" }
+      ]
+    },
+    "tools_used": {
+      "type": "array",
+      "items": { "$ref": "common.schema.json#/$defs/toolBinding" },
+      "uniqueItems": true
+    },
+    "execution_capture": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/executionCapture" },
+        { "type": "null" }
+      ]
+    },
+    "timeout_record": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/timeoutRecord" },
+        { "type": "null" }
+      ]
+    },
+    "unsupported_capability": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/nonBlankString" },
+        { "type": "null" }
+      ]
+    },
+    "failure_classification": {
+      "oneOf": [
+        { "$ref": "common.schema.json#/$defs/nonBlankString" },
+        { "type": "null" }
+      ]
+    },
+    "does_not_establish": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+      "uniqueItems": true
+    },
+    "producer": {
+      "allOf": [
+        { "$ref": "common.schema.json#/$defs/identity" },
+        { "type": "object", "required": ["implementation_hash"], "properties": { "role": { "enum": ["EXPERIMENT_RUNNER", "TOOL", "SYSTEM"] } } }
+      ]
+    },
+    "provenance": { "$ref": "common.schema.json#/$defs/provenance" },
+    "created_at": { "$ref": "common.schema.json#/$defs/timestamp" },
+    "canonical_hash": { "$ref": "common.schema.json#/$defs/canonicalHash" },
+    "extensions": { "$ref": "common.schema.json#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "observation_completeness": { "const": "NONE" } }, "required": ["observation_completeness"] },
+      "then": {
+        "properties": {
+          "execution_observations": { "maxItems": 0 },
+          "comparisons": { "maxItems": 0 },
+          "gate_observations": { "maxItems": 0 }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "observation_completeness": { "const": "PARTIAL" } }, "required": ["observation_completeness"] },
+      "then": { "properties": { "partial_observation_reason": { "$ref": "common.schema.json#/$defs/nonBlankString" } } },
+      "else": { "properties": { "partial_observation_reason": { "type": "null" } } }
+    },
+    {
+      "if": { "properties": { "execution_outcome": { "enum": ["COMPLETED", "FAILED", "TIMED_OUT", "CANCELLED"] } }, "required": ["execution_outcome"] },
+      "then": {
+        "properties": {
+          "environment": { "$ref": "common.schema.json#/$defs/environment" },
+          "execution_capture": { "$ref": "common.schema.json#/$defs/executionCapture" },
+          "unsupported_capability": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution_outcome": { "const": "COMPLETED" } }, "required": ["execution_outcome"] },
+      "then": {
+        "properties": {
+          "observation_completeness": { "const": "COMPLETE" },
+          "execution_observations": { "minItems": 1 },
+          "failure_classification": { "type": "null" },
+          "timeout_record": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution_outcome": { "enum": ["FAILED", "CANCELLED"] } }, "required": ["execution_outcome"] },
+      "then": {
+        "properties": {
+          "observation_completeness": { "enum": ["PARTIAL", "NONE"] },
+          "failure_classification": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+          "timeout_record": { "type": "null" },
+          "evidence_produced": { "items": { "properties": { "evidence_role": { "enum": ["NEGATIVE_DIAGNOSTIC", "PARTIAL_EXECUTION"] } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution_outcome": { "const": "TIMED_OUT" } }, "required": ["execution_outcome"] },
+      "then": {
+        "properties": {
+          "observation_completeness": { "enum": ["PARTIAL", "NONE"] },
+          "failure_classification": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+          "timeout_record": { "$ref": "common.schema.json#/$defs/timeoutRecord" },
+          "gate_observations": { "items": { "properties": { "observation_status": { "enum": ["PARTIAL", "NOT_EVALUATED"] } } } },
+          "evidence_produced": { "items": { "properties": { "evidence_role": { "enum": ["NEGATIVE_DIAGNOSTIC", "PARTIAL_EXECUTION"] } } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution_outcome": { "const": "NOT_RUN" } }, "required": ["execution_outcome"] },
+      "then": {
+        "properties": {
+          "observation_completeness": { "const": "NONE" },
+          "engineering_maturity": { "const": "SPECIFIED" },
+          "execution_observations": { "maxItems": 0 },
+          "administrative_observations": { "minItems": 1 },
+          "comparisons": { "maxItems": 0 },
+          "gate_observations": { "maxItems": 0 },
+          "evidence_produced": { "maxItems": 0 },
+          "environment": { "type": "null" },
+          "deterministic_seed": { "type": "null" },
+          "nondeterminism_declaration": { "type": "null" },
+          "tools_used": { "maxItems": 0 },
+          "execution_capture": { "type": "null" },
+          "timeout_record": { "type": "null" },
+          "unsupported_capability": { "type": "null" },
+          "failure_classification": { "type": "null" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution_outcome": { "const": "UNSUPPORTED" } }, "required": ["execution_outcome"] },
+      "then": {
+        "properties": {
+          "observation_completeness": { "const": "NONE" },
+          "engineering_maturity": { "const": "SPECIFIED" },
+          "execution_observations": { "maxItems": 0 },
+          "administrative_observations": { "minItems": 1 },
+          "comparisons": { "maxItems": 0 },
+          "gate_observations": { "maxItems": 0 },
+          "evidence_produced": { "items": { "properties": { "evidence_role": { "enum": ["ADMINISTRATIVE_DIAGNOSTIC", "CAPABILITY_DIAGNOSTIC"] } } } },
+          "environment": { "type": "null" },
+          "deterministic_seed": { "type": "null" },
+          "nondeterminism_declaration": { "type": "null" },
+          "tools_used": { "maxItems": 0 },
+          "execution_capture": { "type": "null" },
+          "timeout_record": { "type": "null" },
+          "unsupported_capability": { "$ref": "common.schema.json#/$defs/nonBlankString" },
+          "failure_classification": { "$ref": "common.schema.json#/$defs/nonBlankString" }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "execution_outcome": { "enum": ["COMPLETED", "FAILED", "TIMED_OUT", "CANCELLED"] }, "deterministic_seed": { "type": "null" } }, "required": ["execution_outcome", "deterministic_seed"] },
+      "then": { "properties": { "nondeterminism_declaration": { "$ref": "common.schema.json#/$defs/nonBlankString" } }
+      }
+    }
+  ],
+  "additionalProperties": false
+}
